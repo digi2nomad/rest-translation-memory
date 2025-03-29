@@ -273,13 +273,14 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	}
 	
 	/**
-	 *
+	 * only the highest matched is returned.
 	 */
 	@Override
 	public TranslationmemoryUnit findMatchedTU(TranslationProject project, 
 			Language sourceLanguage, String segment, int matchRatioThreshold) {
 		Iterator<TranslationmemoryUnit> i = findAllTUs(project).iterator();
-		//TODO: only the highest matched is returned.
+		TranslationmemoryUnit highestMatchedUnit = null;
+		int highestMatchedRatio = 0;
 		while (i.hasNext()) {
 			TranslationmemoryUnit tu = i.next();
 			Iterator<TranslationmemoryUnitVariant> j = findAllTUVs(tu).iterator();
@@ -287,13 +288,14 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 				TranslationmemoryUnitVariant tuv = j.next();
 				if (tuv.getLanguage().equals(sourceLanguage)) {
 					int ratio = FuzzySearch.ratio(tuv.getSegment(), segment);
-					if (ratio >= matchRatioThreshold) {
-						return tu;
+					if (ratio >= matchRatioThreshold && ratio > highestMatchedRatio) {
+						highestMatchedUnit = tu;
+						highestMatchedRatio = ratio;
 					}
 				}
 			}
 		}
-		return null;
+		return highestMatchedUnit;
 	}
 	
 	/**

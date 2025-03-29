@@ -103,6 +103,28 @@ class TranslationmemoryRepositoryTests {
 	}
 	
 	@Test
+	void testFindMatchedTU() {
+		TranslationProject project1 = new TranslationProject("test_find_matched_tu", "description");
+		project1 = repo.addProject(project1);
+		assertThat(project1).isNotNull();
+		System.out.println("Created project: " + project1);
+		
+		TranslationmemoryUnit tu1 = new TranslationmemoryUnit(project1, new SegmentType());
+		tu1 = repo.addTU(tu1);
+		assertThat(tu1).isNotNull();
+		System.out.println("Created TU: " + tu1);
+		
+		TranslationmemoryUnitVariant tuv1 = new TranslationmemoryUnitVariant(tu1, new Language(), "S1234567890");
+		tuv1 = repo.addTUV(tuv1);
+		assertThat(tuv1).isNotNull();
+		System.out.println("Created TUV: " + tuv1);
+		
+		TranslationmemoryUnit tu2 = repo.findMatchedTU(project1, new Language(), "S12356789");
+		assertThat(tu2).isNotNull();
+		System.out.println("Found matched TU: " + tu2);
+	}
+	
+	@Test
 	void testDeleteProject() {
 		TranslationProject project1 = new TranslationProject("test_delete_project", "description");
 		project1 = repo.addProject(project1);
