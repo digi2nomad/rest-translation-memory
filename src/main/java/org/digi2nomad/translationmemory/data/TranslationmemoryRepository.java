@@ -10,6 +10,10 @@ import org.digi2nomad.translationmemory.TranslationmemoryUnitVariant;
  * Interface for the TranslationmemoryRepository that provides access to the translation memory data in database 
  */
 public interface TranslationmemoryRepository {
+	
+	
+	// default match ratio threshold for fuzzy search
+	static final int MATCH_RATIO_THRESHOLD = 80;
 
 	/**
 	 * @return
@@ -57,6 +61,11 @@ public interface TranslationmemoryRepository {
 	 */
 	void deleteProject(TranslationProject project);
 	
+	/**
+	 * @param project
+	 */
+	void updateProject(TranslationProject project);
+	
 	//---------------------------------------------------------
 	/**
 	 * @param project
@@ -82,6 +91,17 @@ public interface TranslationmemoryRepository {
 	 * @return
 	 */
 	TranslationmemoryUnit findMatchedTU(TranslationProject project, Language sourceLanguage, String segment, int matchRatioThreshold);
+	
+	/**
+	 * With default match ratio threshold
+	 * 
+	 * @param project
+	 * @param sourceLanguage
+	 * @param segment
+	 * @return
+	 */
+	TranslationmemoryUnit findMatchedTU(TranslationProject project, Language sourceLanguage, String segment);
+
 
 	/**
 	 * 
@@ -121,6 +141,11 @@ public interface TranslationmemoryRepository {
 	 * @param tuv
 	 */
 	void deleteTUV(TranslationmemoryUnitVariant tuv);
+	
+	/**
+	 * @param tuv
+	 */
+	void updateTUV(TranslationmemoryUnitVariant tuv);
 
 
 }

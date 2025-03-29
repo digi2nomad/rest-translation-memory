@@ -58,6 +58,11 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void updateProject(TranslationProject project) {
+		// TODO Auto-generated method stub
+	}
 
 	@Override
 	public Iterable<TranslationmemoryUnit> findAllTUs(TranslationProject project) {
@@ -83,6 +88,14 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 		//TODO: implement the method
 		return null;
 	}
+	
+	@Override
+	public TranslationmemoryUnit findMatchedTU(TranslationProject project, 
+			Language sourceLanguage, String segment) {
+		//TODO: implement the method
+		return null;
+	}
+	
 	
 	@Override
 	public void deleteTU(TranslationmemoryUnit tu) {
@@ -113,6 +126,11 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 	public void deleteTUV(TranslationmemoryUnitVariant tuv) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void updateTUV(TranslationmemoryUnitVariant tuv) {
+		// TODO Auto-generated method stub
 	}
 
 }
