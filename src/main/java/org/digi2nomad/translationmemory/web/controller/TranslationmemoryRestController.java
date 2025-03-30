@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TranslationmemoryRestController {
-	
 	
 	private final TranslationmemoryService translationmemoryService;
 	
@@ -21,22 +22,22 @@ public class TranslationmemoryRestController {
 	}
 	
 	@GetMapping("/projects")
-	public List<TranslationProject> getProjects() {
+	public @ResponseBody List<TranslationProject> getProjects() {
 		return translationmemoryService.getProjects();
 	}
 	
 	@PostMapping("/projects")
-	public TranslationProject createProject(TranslationProject project) {
+	public @ResponseBody TranslationProject createProject(@RequestBody TranslationProject project) {
 		return translationmemoryService.createProject(project);
 	}
 	
 	@GetMapping("/projects/{id}")
-	public TranslationProject getProject(Long id) {
+	public @ResponseBody TranslationProject getProject(Long id) {
 		return translationmemoryService.getProject(id);
 	}
 	
 	@PutMapping("/projects/{id}")
-	public TranslationProject updateProject(Long id, TranslationProject project) {
+	public @ResponseBody TranslationProject updateProject(Long id, @RequestBody TranslationProject project) {
 		return translationmemoryService.updateProject(id, project);
 	}
 	

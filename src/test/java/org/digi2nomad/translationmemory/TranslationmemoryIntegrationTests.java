@@ -1,7 +1,5 @@
 package org.digi2nomad.translationmemory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Arrays;
 
 import org.json.JSONException;
@@ -23,20 +21,35 @@ public class TranslationmemoryIntegrationTests {
 	
 	@LocalServerPort
 	private int port;
-
+	
 	@Test
-	public void testGetProjects() throws JSONException {
-		String url = "http://localhost:" + port + "/projects";
+	public void testCreateAndRetrieveProjects() throws JSONException {
+		String url = "http://localhost:"+ port + "/projects";
 		HttpHeaders headers = new HttpHeaders();
+		
+		// Create a project 1
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>("{\"id\":1,\"name\":\"Project 1\"}", headers);
 		
 		TestRestTemplate restTemplate = new TestRestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 		
-		String expected = "[{\"id\":1,\"name\":\"Project 1\"},{\"id\":2,\"name\":\"Project 2\"}]";
+		String expected = "{\"name\":\"Project 1\"}";
+		String actual = response.getBody();
+		JSONAssert.assertEquals(expected, actual, false);
+		
+		// Retrieve the projects 
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		entity = new HttpEntity<String>(null, headers);
+		
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		
+		expected = "[{\"id\":1,\"name\":\"Project 1\"},{\"id\":2,\"name\":\"Project 2\"}]";
+		actual = response.getBody();
 		//assertEquals(expected, response.getBody()/*, false*/);
-		JSONAssert.assertEquals(expected, response.getBody(), false);
+		JSONAssert.assertEquals(expected, actual, false);
 	}
 	
 }

@@ -39,4 +39,10 @@ public class TranslationProject {
 		this.description = description;
 	}
 	
+	/**
+	 * default constructor
+	 */
+	public TranslationProject() {
+	}
+	
 }
