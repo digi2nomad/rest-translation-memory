@@ -153,6 +153,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	@Override
 	public TranslationProject findProject(Long id) {
 		try {
+			//TODO: check if the project exists in cache
 			return jdbcTemplate.queryForObject(SQL_FIND_PROJECT, this::mapRowToProject, id);
 		} catch (Exception e) {
 			log.info("Project not found: " + e.getMessage());
@@ -238,6 +239,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	@Override
 	public TranslationmemoryUnit findTU(Long tuId) {
 		try {
+			//TODO: check if the TU exists in cache
 			return jdbcTemplate.queryForObject(SQL_FIND_TU, this::mapRowToTU, tuId);
 		} catch (Exception e) {
 			log.info("TU not found: " + e.getMessage());
@@ -365,6 +367,12 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 		}
 		if (tuv.getCreateDate() == null) {
 			tuv.setCreateDate(Instant.now());
+		}
+		Iterable<TranslationmemoryUnitVariant> tuvs = findAllTUVs(tu);
+		for (TranslationmemoryUnitVariant t : tuvs) {
+			if (t.getLanguage().equals(tuv.getLanguage())) {
+				throw new IllegalArgumentException("TranslationmemoryUnitVariant's language already exists");
+			}
 		}
 		jdbcTemplate.update(
 				SQL_ADD_TUV,

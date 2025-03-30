@@ -103,6 +103,32 @@ class TranslationmemoryRepositoryTests {
 	}
 	
 	@Test
+	void testAddTUVwithDuplicatedLanguage() {
+		TranslationProject project1 = new TranslationProject("test_add_tuv_with_deplicated_language", "description");
+		project1 = repo.addProject(project1);
+		assertThat(project1).isNotNull();
+		System.out.println("Created project: " + project1);
+		
+		TranslationmemoryUnit tu1 = new TranslationmemoryUnit(project1, new SegmentType());
+		tu1 = repo.addTU(tu1);
+		assertThat(tu1).isNotNull();
+		System.out.println("Created TU: " + tu1);
+		
+		TranslationmemoryUnitVariant tuv1 = new TranslationmemoryUnitVariant(tu1, new Language(), "segment1");
+		tuv1 = repo.addTUV(tuv1);
+		assertThat(tuv1).isNotNull();
+		System.out.println("Created TUV: " + tuv1);
+		
+		try {
+			TranslationmemoryUnitVariant tuv2 = new TranslationmemoryUnitVariant(tu1, new Language(), "segment2");
+			tuv2 = repo.addTUV(tuv2);
+		} catch (IllegalArgumentException e) {
+			assertThat(e.getMessage()).isEqualTo("TranslationmemoryUnitVariant's language already exists");
+		}
+
+	}	
+	
+	@Test
 	void testFindMatchedTU() {
 		TranslationProject project1 = new TranslationProject("test_find_matched_tu", "description");
 		project1 = repo.addProject(project1);
