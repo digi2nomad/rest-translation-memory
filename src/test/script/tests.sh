@@ -15,3 +15,8 @@ curl -v localhost:8080/projects
 curl -v localhost:8080/projects/449877032980072746
 
 
+#update a project
+curl -X PUT localhost:8080/projects/449877032980072746 -H 'Content-type:application/json' -d '{"name": "EV Update 2", "description": "another news of electric vehicles"}'
+
+#delete a project
+curl -X DELETE localhost:8080/projects/449877032980072746

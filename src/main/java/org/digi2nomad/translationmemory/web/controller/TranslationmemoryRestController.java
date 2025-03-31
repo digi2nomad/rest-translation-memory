@@ -6,6 +6,7 @@ import org.digi2nomad.translationmemory.TranslationProject;
 import org.digi2nomad.translationmemory.service.TranslationmemoryService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,17 +33,17 @@ public class TranslationmemoryRestController {
 	}
 	
 	@GetMapping("/projects/{id}")
-	public @ResponseBody TranslationProject getProject(Long id) {
+	public @ResponseBody TranslationProject getProject(@PathVariable Long id) {
 		return translationmemoryService.getProject(id);
 	}
 	
 	@PutMapping("/projects/{id}")
-	public @ResponseBody TranslationProject updateProject(Long id, @RequestBody TranslationProject project) {
+	public @ResponseBody TranslationProject updateProject(@PathVariable Long id, @RequestBody TranslationProject project) {
 		return translationmemoryService.updateProject(id, project);
 	}
 	
 	@DeleteMapping("/projects/{id}")
-	public void deleteProject(Long id) {
+	public void deleteProject(@PathVariable Long id) {
 		translationmemoryService.deleteProject(id);
 	}
 
