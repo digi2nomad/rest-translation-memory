@@ -6,6 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * The unit variant of translation memory of a specific language.
+ * This class is used to transfer data between the service layer 
+ * and the controller layer and to store data in the database. 
+ */
 @Data
 public class TranslationmemoryUnitVariant {
 	

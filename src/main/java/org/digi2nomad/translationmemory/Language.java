@@ -4,6 +4,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * The language of the translation memory unit's variants, 
+ * which are translations of the same unit in different languages.
+ */
 @Data
 public class Language {
 	

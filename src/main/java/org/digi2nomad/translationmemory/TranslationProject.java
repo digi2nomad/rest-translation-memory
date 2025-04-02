@@ -2,16 +2,27 @@ package org.digi2nomad.translationmemory;
 
 import java.time.Instant;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * 
+ * Translation project entity. This class is used to transfer data between
+ * the service layer and the controller layer and to store data in the database.
  */
 @Data
 public class TranslationProject {
+	
 	private Long id;
+	
+	@NotBlank
+	@Size(max=50, message="Name must be less than 50 long")
 	private String name;
+	
+	@NotBlank
+	@Size(max=250, message="Description must be less than 250 long")
 	private String description;
+	
 	private Instant createDate;
 	
 	/**

@@ -5,7 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * Segment Type
+ * The type of segment in the translation memory unit, which is a sentence,
+ * paragraph, or other type of segment.
  */
 @Data
 public class SegmentType {

@@ -13,7 +13,7 @@ create table if not exists SegmentType (
 create table if not exists TranslationProject (
     id identity,
     name varchar(50) not null,
-    description varchar(100) not null,
+    description varchar(250) not null,
     createDate timestamp not null
 ); 
 
