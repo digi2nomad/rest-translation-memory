@@ -76,4 +76,17 @@ public class TranslationmemoryVariant {
 		this.segment = segment;
 	}
 
+	/**
+	 * default constructor
+	 */
+	public TranslationmemoryVariant() {
+		this.tuId = 0L;
+		this.language = new Language();
+		this.segment = "";
+		this.createDate = Instant.now();
+		this.useDate = Instant.now();
+		this.useCount = 0;
+		this.reviewed = false;
+	}
+
 }

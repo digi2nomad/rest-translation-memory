@@ -51,5 +51,11 @@ public class TranslationmemoryUnit {
 		this.segmentType = segmentType;
 	}
 
+	/**
+	 * default constructor
+	 */
+	public TranslationmemoryUnit() {
+	}
+
 	
 }

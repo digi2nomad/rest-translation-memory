@@ -1,5 +1,7 @@
 package org.digi2nomad.translationmemory.service.dto;
 
+import org.digi2nomad.translationmemory.data.dao.Language;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -9,6 +11,17 @@ import lombok.Data;
  */
 @Data
 public class LanguageDTO {
+
+	private long id;
+	
+	@NotNull
+	@Size(max=3, message="LangCode must be less than 3 long")
+	private String langcode;
+
+	@NotNull
+	@Size(max=20, message="Language must be less than 20 long")
+	private String language;
+	
 	/**
 	 * @param id
 	 * @param langcode
@@ -29,14 +42,17 @@ public class LanguageDTO {
 		this.language = "English";
 	}
 
-	private long id;
-	
-	@NotNull
-	@Size(max=3, message="LangCode must be less than 3 long")
-	private String langcode;
-
-	@NotNull
-	@Size(max=20, message="Language must be less than 20 long")
-	private String language;
+	/**
+	 * @param language
+	 * @return
+	 */
+	public static Language to(LanguageDTO language) {
+		if (language != null) {
+			return new Language(language.getId(), 
+					language.getLangcode(), 
+					language.getLanguage());	
+		}
+		return null;
+	}
 
 }

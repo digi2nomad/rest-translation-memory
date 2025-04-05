@@ -1,6 +1,7 @@
 package org.digi2nomad.translationmemory.service.dto;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.digi2nomad.translationmemory.data.dao.TranslationProject;
@@ -32,7 +33,17 @@ public class TranslationProjectDTO {
 	 * @return
 	 */
 	public static List<TranslationProjectDTO> from(Iterable<TranslationProject> i) {
-		// TODO Auto-generated method stub
+		if (i != null) {
+			ArrayList<TranslationProjectDTO> ret = new ArrayList<>();
+			i.iterator().forEachRemaining((p) -> {
+				TranslationProjectDTO dto = new TranslationProjectDTO();
+				dto.setId(p.getId());
+				dto.setName(p.getName());
+				dto.setDescription(p.getDescription());
+				dto.setCreateDate(p.getCreateDate());
+			});
+			return ret;
+		}
 		return null;
 	}
 
@@ -41,23 +52,47 @@ public class TranslationProjectDTO {
 	 * @return
 	 */
 	public static TranslationProjectDTO from(TranslationProject project) {
-		// TODO Auto-generated method stub
-		return null;
+		TranslationProjectDTO ret = new TranslationProjectDTO();
+		ret.setId(project.getId());
+		ret.setName(project.getName());
+		ret.setDescription(project.getDescription());
+		ret.setCreateDate(project.getCreateDate());
+		return ret;
 	}
 
 	/**
-	 * @param newProject
+	 * @param project
 	 * @return
 	 */
-	public static TranslationProject to(TranslationProjectDTO newProject) {
-		// TODO Auto-generated method stub
-		return null;
+	public static TranslationProject to(TranslationProjectDTO project) {
+		TranslationProject ret = new TranslationProject();
+		ret.setId(project.getId());
+		ret.setName(project.getName());
+		ret.setDescription(project.getDescription());
+		ret.setCreateDate(project.getCreateDate());
+		return ret;
 	}
 
-	public TranslationProjectDTO(long l, String string, String string2, Instant now) {
-		// TODO Auto-generated constructor stub
+	/**
+	 * @param id
+	 * @param name
+	 * @param description
+	 * @param createDate
+	 */
+	public TranslationProjectDTO(Long id, 
+			String name, 
+			String description, 
+			Instant createDate) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.createDate = createDate;
 	}
-
 	
+	/**
+	 * default constructor
+	 */
+	public TranslationProjectDTO() {
+	}
 
 }
