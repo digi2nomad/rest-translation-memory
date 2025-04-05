@@ -1,10 +1,10 @@
 package org.digi2nomad.translationmemory.data;
 
-import org.digi2nomad.translationmemory.Language;
-import org.digi2nomad.translationmemory.SegmentType;
-import org.digi2nomad.translationmemory.TranslationProject;
-import org.digi2nomad.translationmemory.TranslationmemoryUnit;
-import org.digi2nomad.translationmemory.TranslationmemoryUnitVariant;
+import org.digi2nomad.translationmemory.data.dao.Language;
+import org.digi2nomad.translationmemory.data.dao.SegmentType;
+import org.digi2nomad.translationmemory.data.dao.TranslationProject;
+import org.digi2nomad.translationmemory.data.dao.TranslationmemoryUnit;
+import org.digi2nomad.translationmemory.data.dao.TranslationmemoryVariant;
 
 /**
  * Implementation of the TranslationmemoryRepository using JPA
@@ -54,7 +54,7 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 	}
 	
 	@Override
-	public void deleteProject(TranslationProject project) {
+	public void deleteProject(Long projectId) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -65,32 +65,32 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 	}
 
 	@Override
-	public Iterable<TranslationmemoryUnit> findAllTUs(TranslationProject project) {
+	public Iterable<TranslationmemoryUnit> findAllTUs(Long projectId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TranslationmemoryUnit findTU(Long tuId) {
+	public TranslationmemoryUnit findTU(Long projectId, Long tuId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TranslationmemoryUnit addTU(TranslationmemoryUnit tu) {
+	public TranslationmemoryUnit addTU(Long projectId, TranslationmemoryUnit tu) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TranslationmemoryUnit findMatchedTU(TranslationProject project, 
+	public TranslationmemoryUnit findMatchedTU(Long projectId, 
 			Language sourceLanguage, String segment, int matchPercent) {
 		//TODO: implement the method
 		return null;
 	}
 	
 	@Override
-	public TranslationmemoryUnit findMatchedTU(TranslationProject project, 
+	public TranslationmemoryUnit findMatchedTU(Long projectId, 
 			Language sourceLanguage, String segment) {
 		//TODO: implement the method
 		return null;
@@ -98,38 +98,38 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 	
 	
 	@Override
-	public void deleteTU(TranslationmemoryUnit tu) {
+	public void deleteTU(Long tuId) {
 		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
-	public Iterable<TranslationmemoryUnitVariant> findAllTUVs(TranslationmemoryUnit tu) {
+	public Iterable<TranslationmemoryVariant> findAllTUVs(Long tuId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TranslationmemoryUnitVariant addTUV(TranslationmemoryUnitVariant tuv) {
+	public TranslationmemoryVariant addTUV(Long tuId, TranslationmemoryVariant tuv) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
-	public TranslationmemoryUnitVariant findTUV(Long tuvId) {
+	public TranslationmemoryVariant findTUV(Long tuvId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void deleteTUV(TranslationmemoryUnitVariant tuv) {
+	public void deleteTUV(TranslationmemoryVariant tuv) {
 		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
-	public void updateTUV(TranslationmemoryUnitVariant tuv) {
+	public void updateTUV(TranslationmemoryVariant tuv) {
 		// TODO Auto-generated method stub
 	}
 

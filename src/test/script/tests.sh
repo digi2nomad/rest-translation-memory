@@ -6,7 +6,19 @@
 #    The following is the information of endpoints available:
 #       http://localhost:8080/swagger-ui/index.html
 #		http://localhost:8080/api-docs
+#
+#    The following is the information of the health check:
 #       http://localhost:8080/actuator/health
+#       http://localhost:8080/actuator/env
+#       http://localhost:8080/actuator/metrics
+#       http://localhost:8080/actuator/beans
+#       http://localhost:8080/actuator/mappings
+#       http://localhost:8080/actuator/configprops
+#       http://localhost:8080/actuator/info
+#       http://localhost:8080/actuator/loggers
+#       http://localhost:8080/actuator/scheduledtasks
+#       http://localhost:8080/actuator/threaddump
+#       http://localhost:8080/actuator/heapdump 
 #
 #    The following is the information of the database:
 #       http://localhost:8080/h2-console

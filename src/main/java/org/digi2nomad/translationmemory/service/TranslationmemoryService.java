@@ -2,11 +2,10 @@ package org.digi2nomad.translationmemory.service;
 
 import java.util.List;
 
-import org.digi2nomad.translationmemory.TranslationProject;
-import org.digi2nomad.translationmemory.TranslationmemoryUnit;
-import org.digi2nomad.translationmemory.TranslationmemoryUnitAndVariants;
-import org.digi2nomad.translationmemory.TranslationmemoryUnitVariant;
 import org.digi2nomad.translationmemory.data.TranslationmemoryRepository;
+import org.digi2nomad.translationmemory.service.dto.TranslationProjectDTO;
+import org.digi2nomad.translationmemory.service.dto.TranslationmemoryUnitDTO;
+import org.digi2nomad.translationmemory.service.dto.TranslationmemoryVariantDTO;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,25 +26,27 @@ public class TranslationmemoryService {
 	/**
 	 * @return
 	 */
-	public List<TranslationProject> getProjects() {
-		Iterable<TranslationProject> i = translationmemoryRepository.findAllProjects();
-		return (List<TranslationProject>) i;
+	public List<TranslationProjectDTO> getProjects() {
+		List<TranslationProjectDTO> dtos 
+			= TranslationProjectDTO.from(translationmemoryRepository.findAllProjects());
+		return dtos;
 	}
 
 	/**
 	 * @param projId
 	 * @return
 	 */
-	public TranslationProject getProject(Long projId) {
-		return translationmemoryRepository.findProject(projId);
+	public TranslationProjectDTO getProject(Long projId) {
+		return TranslationProjectDTO.from(translationmemoryRepository.findProject(projId));
 	}
 
 	/**
 	 * @param newProject
 	 * @return
 	 */
-	public TranslationProject createProject(TranslationProject newProject) {
-		return translationmemoryRepository.addProject(newProject);
+	public TranslationProjectDTO createProject(TranslationProjectDTO newProject) {
+		return TranslationProjectDTO.from(
+				translationmemoryRepository.addProject(TranslationProjectDTO.to(newProject)));
 	}
 
 	/**
@@ -53,9 +54,9 @@ public class TranslationmemoryService {
 	 * @param updateProject
 	 * @return
 	 */
-	public TranslationProject updateProject(Long projId, TranslationProject updateProject) {
+	public TranslationProjectDTO updateProject(Long projId, TranslationProjectDTO updateProject) {
 		updateProject.setId(projId);
-		translationmemoryRepository.updateProject(updateProject);
+		translationmemoryRepository.updateProject(TranslationProjectDTO.to(updateProject));
 		return updateProject;
 	}
 
@@ -63,21 +64,16 @@ public class TranslationmemoryService {
 	 * @param projId
 	 */
 	public void deleteProject(Long projId) {
-		TranslationProject project = translationmemoryRepository.findProject(projId);
-		translationmemoryRepository.deleteProject(project);
+		translationmemoryRepository.deleteProject(projId);
 	}
 
 	/**
 	 * @param projId
 	 * @return
 	 */
-	public List<TranslationmemoryUnit> getUnits(Long projId) {
-		try {
-			TranslationProject project = translationmemoryRepository.findProject(projId);
-			return (List<TranslationmemoryUnit>)translationmemoryRepository.findAllTUs(project);
-		} catch (Exception e) {
-			return null;
-		}
+	public List<TranslationmemoryUnitDTO> getUnits(Long projId) {
+		return TranslationmemoryUnitDTO.from(
+				translationmemoryRepository.findAllTUs(projId));
 	}
 
 	/**
@@ -85,14 +81,9 @@ public class TranslationmemoryService {
 	 * @param unit
 	 * @return
 	 */
-	public TranslationmemoryUnit createUnit(Long projId, TranslationmemoryUnit unit) {
-		try {
-			TranslationProject project = translationmemoryRepository.findProject(projId);
-			unit.setTranslationProject(project);
-			return translationmemoryRepository.addTU(unit);
-		} catch (Exception e) {
-			return null;
-		}
+	public TranslationmemoryUnitDTO createUnit(Long projId, TranslationmemoryUnitDTO unit) {
+		return TranslationmemoryUnitDTO.from(
+				translationmemoryRepository.addTU(projId, TranslationmemoryUnitDTO.to(unit)));
 	}
 
 	/**
@@ -100,16 +91,8 @@ public class TranslationmemoryService {
 	 * @param unitId
 	 * @return
 	 */
-	public TranslationmemoryUnit getUnit(Long projId, Long unitId) {
-		try {
-			@SuppressWarnings("unused")
-			TranslationProject project = translationmemoryRepository.findProject(projId);
-			TranslationmemoryUnit unit = translationmemoryRepository.findTU(unitId);
-			//TODO: check unit.getTranslationProject().equals(project) and throw exception if not
-			return unit;
-		} catch (Exception e) {
-			return null;
-		}
+	public TranslationmemoryUnitDTO getUnit(Long projId, Long unitId) {
+		return TranslationmemoryUnitDTO.from(translationmemoryRepository.findTU(projId, unitId));
 	}
 
 	/**
@@ -125,7 +108,7 @@ public class TranslationmemoryService {
 	 * @param unitId
 	 * @return
 	 */
-	public List<TranslationmemoryUnitVariant> getVariants(Long projId, Long unitId) {
+	public List<TranslationmemoryVariantDTO> getVariants(Long projId, Long unitId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -136,7 +119,7 @@ public class TranslationmemoryService {
 	 * @param variant
 	 * @return
 	 */
-	public TranslationmemoryUnitVariant createVariant(Long projId, Long unitId, TranslationmemoryUnitVariant variant) {
+	public TranslationmemoryVariantDTO createVariant(Long projId, Long unitId, TranslationmemoryVariantDTO variant) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -147,7 +130,7 @@ public class TranslationmemoryService {
 	 * @param variantId
 	 * @return
 	 */
-	public TranslationmemoryUnitVariant getVariant(Long projId, Long unitId, Long variantId) {
+	public TranslationmemoryVariantDTO getVariant(Long projId, Long unitId, Long variantId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -159,8 +142,8 @@ public class TranslationmemoryService {
 	 * @param variant
 	 * @return
 	 */
-	public TranslationmemoryUnitVariant updateVariant(Long projId, Long unitId, Long variantId,
-			TranslationmemoryUnitVariant variant) {
+	public TranslationmemoryVariantDTO updateVariant(Long projId, Long unitId, Long variantId,
+			TranslationmemoryVariantDTO variant) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -181,7 +164,7 @@ public class TranslationmemoryService {
 	 * @param srclang
 	 * @return
 	 */
-	public TranslationmemoryUnitAndVariants retrieveMatchedUnitAndVariants(Long projId, Long ratio, String srclang) {
+	public TranslationmemoryUnitDTO retrieveMatchedUnit(Long projId, Long ratio, String srclang) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -191,7 +174,7 @@ public class TranslationmemoryService {
 	 * @param unitId
 	 * @return
 	 */
-	public TranslationmemoryUnitAndVariants retrieveUnitAndVariants(Long projId, Long unitId) {
+	public TranslationmemoryUnitDTO retrieveUnit(Long projId, Long unitId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

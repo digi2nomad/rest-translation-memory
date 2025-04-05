@@ -3,6 +3,7 @@ package org.digi2nomad.translationmemory;
 import java.util.Arrays;
 import java.util.List;
 
+import org.digi2nomad.translationmemory.data.dao.TranslationProject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;

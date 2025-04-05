@@ -1,10 +1,10 @@
 package org.digi2nomad.translationmemory.data;
 
-import org.digi2nomad.translationmemory.Language;
-import org.digi2nomad.translationmemory.SegmentType;
-import org.digi2nomad.translationmemory.TranslationProject;
-import org.digi2nomad.translationmemory.TranslationmemoryUnit;
-import org.digi2nomad.translationmemory.TranslationmemoryUnitVariant;
+import org.digi2nomad.translationmemory.data.dao.Language;
+import org.digi2nomad.translationmemory.data.dao.SegmentType;
+import org.digi2nomad.translationmemory.data.dao.TranslationProject;
+import org.digi2nomad.translationmemory.data.dao.TranslationmemoryUnit;
+import org.digi2nomad.translationmemory.data.dao.TranslationmemoryVariant;
 
 /**
  * Interface for the TranslationmemoryRepository that provides access to the translation memory data in database 
@@ -47,7 +47,7 @@ public interface TranslationmemoryRepository {
 	 * @param id
 	 * @return
 	 */
-	TranslationProject findProject(Long id);
+	TranslationProject findProject(Long projectId);
 	
 	/**
 	 * @param project
@@ -59,7 +59,7 @@ public interface TranslationmemoryRepository {
 	/**
 	 * @param project
 	 */
-	void deleteProject(TranslationProject project);
+	void deleteProject(Long projectId);
 	
 	/**
 	 * @param project
@@ -71,81 +71,82 @@ public interface TranslationmemoryRepository {
 	 * @param project
 	 * @return
 	 */
-	Iterable<TranslationmemoryUnit> findAllTUs(TranslationProject project);
+	Iterable<TranslationmemoryUnit> findAllTUs(Long projectId);
 	
-	/**
-	 * @param tuId
+	/*
+	 * @param projectId
+	 * @param tuid
 	 * @return
 	 */
-	TranslationmemoryUnit findTU(Long tuid);
+	TranslationmemoryUnit findTU(Long projectId, Long tuid);
 	
 
 	/**
 	 * find a TranslationmemoryUnit matching the segment with higher than the match ratio threshold in the source language, 
 	 * only the highest matched is returned.
 	 * 
-	 * @param project
+	 * @param projectId
 	 * @param sourceLanguage
 	 * @param segment
 	 * @param matchRatioThreshold
 	 * @return
 	 */
-	TranslationmemoryUnit findMatchedTU(TranslationProject project, Language sourceLanguage, String segment, int matchRatioThreshold);
+	TranslationmemoryUnit findMatchedTU(Long projectId, Language sourceLanguage, String segment, int matchRatioThreshold);
 	
 	/**
 	 * With default match ratio threshold
 	 * 
-	 * @param project
+	 * @param projectId
 	 * @param sourceLanguage
 	 * @param segment
 	 * @return
 	 */
-	TranslationmemoryUnit findMatchedTU(TranslationProject project, Language sourceLanguage, String segment);
+	TranslationmemoryUnit findMatchedTU(Long projectId, Language sourceLanguage, String segment);
 
 
 	/**
-	 * 
+	 * @param projId
 	 * @param tu
 	 * @return
 	 */
-	TranslationmemoryUnit addTU(TranslationmemoryUnit tu);
+	TranslationmemoryUnit addTU(Long projId, TranslationmemoryUnit tu);
 	
 	/**
-	 * @param tu
+	 * @param tuId
 	 */
-	void deleteTU(TranslationmemoryUnit tu);
+	void deleteTU(Long tuId);
 	
 		
 	//---------------------------------------------------------
 	/**
-	 * @param tu
+	 * @param tuId
 	 * @return
 	 */
-	Iterable<TranslationmemoryUnitVariant> findAllTUVs(TranslationmemoryUnit tu);
+	Iterable<TranslationmemoryVariant> findAllTUVs(Long tuId);
 	
 	/**
 	 * @param tuvId
 	 * @return
 	 */
-	TranslationmemoryUnitVariant findTUV(Long tuvId);
+	TranslationmemoryVariant findTUV(Long tuvId);
 
 	/**
-	 * @param tu
+	 * @param tuId
 	 * @param tuv
 	 * @return
 	 */
-	TranslationmemoryUnitVariant addTUV(TranslationmemoryUnitVariant tuv);
+	TranslationmemoryVariant addTUV(Long tuId, TranslationmemoryVariant tuv);
 	
 
 	/**
 	 * @param tuv
 	 */
-	void deleteTUV(TranslationmemoryUnitVariant tuv);
+	void deleteTUV(TranslationmemoryVariant tuv);
 	
 	/**
 	 * @param tuv
 	 */
-	void updateTUV(TranslationmemoryUnitVariant tuv);
+	void updateTUV(TranslationmemoryVariant tuv);
 
 
 }
