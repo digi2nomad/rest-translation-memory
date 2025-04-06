@@ -1,6 +1,7 @@
 package org.digi2nomad.translationmemory.service.dto;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.digi2nomad.translationmemory.data.dao.TranslationmemoryVariant;
@@ -60,7 +61,21 @@ public class TranslationmemoryVariantDTO {
 	 * @return
 	 */
 	public static List<TranslationmemoryVariantDTO> from(Iterable<TranslationmemoryVariant> tuvs) {
-		// TODO Auto-generated method stub
+		if (tuvs != null) {
+			ArrayList<TranslationmemoryVariantDTO> ret = new ArrayList<>();
+			tuvs.iterator().forEachRemaining((tuv) -> {
+				TranslationmemoryVariantDTO dto = new TranslationmemoryVariantDTO();
+				dto.setId(tuv.getId());
+				//dto.setTuId(tuv.getTuId());
+				dto.setLanguage(LanguageDTO.from(tuv.getLanguage()));
+				dto.setSegment(tuv.getSegment());
+				dto.setCreateDate(tuv.getCreateDate());
+				dto.setUseDate(tuv.getUseDate());
+				dto.setUseCount(tuv.getUseCount());
+				dto.setReviewed(tuv.isReviewed());
+			});
+			return ret;
+		}
 		return null;
 	}
 

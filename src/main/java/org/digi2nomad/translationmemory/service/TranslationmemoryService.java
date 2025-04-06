@@ -203,8 +203,9 @@ public class TranslationmemoryService {
 	 * @return
 	 */
 	public TranslationmemoryUnitDTO retrieveUnit(Long projId, Long unitId) {
-		// TODO Auto-generated method stub
-		return null;
+		TranslationmemoryUnitDTO unit = TranslationmemoryUnitDTO.from(
+				translationmemoryRepository.findTU(projId, unitId));
+		return unit;
 	}
 
 }
