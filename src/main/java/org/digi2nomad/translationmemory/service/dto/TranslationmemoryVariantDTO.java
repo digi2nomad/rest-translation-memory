@@ -1,6 +1,7 @@
 package org.digi2nomad.translationmemory.service.dto;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.digi2nomad.translationmemory.data.dao.TranslationmemoryVariant;
 
@@ -17,8 +18,7 @@ public class TranslationmemoryVariantDTO {
 
 	private Long id;
 	
-	//@NotNull
-	//private Long tuId;
+	private TranslationmemoryUnitDTO tu;
 	
 	@NotNull
 	private LanguageDTO language;
@@ -50,6 +50,35 @@ public class TranslationmemoryVariantDTO {
 			ret.setUseDate(variant.getUseDate());
 			ret.setUseCount(variant.getUseCount());
 			ret.setReviewed(variant.isReviewed());
+			return ret;
+		}
+		return null;
+	}
+
+	/**
+	 * @param tuvs
+	 * @return
+	 */
+	public static List<TranslationmemoryVariantDTO> from(Iterable<TranslationmemoryVariant> tuvs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param tuv
+	 * @return
+	 */
+	public static TranslationmemoryVariantDTO from(TranslationmemoryVariant tuv) {
+		if (tuv != null) {
+			TranslationmemoryVariantDTO ret = new TranslationmemoryVariantDTO();
+			ret.setId(tuv.getId());
+			//ret.setTuId(tuv.getTuId());
+			ret.setLanguage(LanguageDTO.from(tuv.getLanguage()));
+			ret.setSegment(tuv.getSegment());
+			ret.setCreateDate(tuv.getCreateDate());
+			ret.setUseDate(tuv.getUseDate());
+			ret.setUseCount(tuv.getUseCount());
+			ret.setReviewed(tuv.isReviewed());
 			return ret;
 		}
 		return null;

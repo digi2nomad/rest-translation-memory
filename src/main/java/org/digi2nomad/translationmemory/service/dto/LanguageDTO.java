@@ -55,4 +55,17 @@ public class LanguageDTO {
 		return null;
 	}
 
+	/**
+	 * @param language
+	 * @return
+	 */
+	public static LanguageDTO from(Language language) {
+		if (language != null) {
+			return new LanguageDTO(language.getId(), 
+					language.getLangcode(), 
+					language.getLanguage());
+		}
+		return null;
+	}
+
 }

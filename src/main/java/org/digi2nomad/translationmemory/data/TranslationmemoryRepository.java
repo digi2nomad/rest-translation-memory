@@ -91,17 +91,7 @@ public interface TranslationmemoryRepository {
 	 * @param matchRatioThreshold
 	 * @return
 	 */
-	TranslationmemoryUnit findMatchedTU(Long projectId, Language sourceLanguage, String segment, int matchRatioThreshold);
-	
-	/**
-	 * With default match ratio threshold
-	 * 
-	 * @param projectId
-	 * @param sourceLanguage
-	 * @param segment
-	 * @return
-	 */
-	TranslationmemoryUnit findMatchedTU(Long projectId, Language sourceLanguage, String segment);
+	TranslationmemoryUnit findMatchedTU(Long projectId, Long matchRatioThreshold, Language sourceLanguage, String segment);
 
 
 	/**
@@ -112,41 +102,55 @@ public interface TranslationmemoryRepository {
 	TranslationmemoryUnit addTU(Long projId, TranslationmemoryUnit tu);
 	
 	/**
+	 * @param projId
 	 * @param tuId
 	 */
-	void deleteTU(Long tuId);
+	void deleteTU(Long projId, Long tuId);
 	
 		
 	//---------------------------------------------------------
 	/**
+	 * @param projId
 	 * @param tuId
 	 * @return
 	 */
-	Iterable<TranslationmemoryVariant> findAllTUVs(Long tuId);
+	Iterable<TranslationmemoryVariant> findAllTUVs(Long projId, Long tuId);
 	
 	/**
+	 * @param projId
+	 * @param tuId
 	 * @param tuvId
 	 * @return
 	 */
-	TranslationmemoryVariant findTUV(Long tuvId);
+	TranslationmemoryVariant findTUV(Long projId, Long tuId, Long tuvId);
 
 	/**
+	 * @param projId
 	 * @param tuId
 	 * @param tuv
 	 * @return
 	 */
-	TranslationmemoryVariant addTUV(Long tuId, TranslationmemoryVariant tuv);
+	TranslationmemoryVariant addTUV(Long projId, Long tuId, TranslationmemoryVariant tuv);
 	
 
 	/**
-	 * @param tuv
+	 * @param projId
+	 * @param tuId
+	 * @param tuvId
 	 */
-	void deleteTUV(TranslationmemoryVariant tuv);
+	void deleteTUV(Long projId, Long tuId, Long tuvId);
 	
 	/**
+	 * @param projId
+	 * @param tuId
 	 * @param tuv
 	 */
-	void updateTUV(TranslationmemoryVariant tuv);
+	TranslationmemoryVariant updateTUV(Long projId, Long tuId, TranslationmemoryVariant tuv);
 
+	/**
+	 * @param lang
+	 * @return
+	 */
+	Language findLanguage(String lang);
 
 }

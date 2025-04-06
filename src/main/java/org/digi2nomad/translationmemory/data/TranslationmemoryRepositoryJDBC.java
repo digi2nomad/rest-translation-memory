@@ -104,6 +104,26 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 		return null;
 	}
 	
+
+	/**
+	 *
+	 * @param lang
+	 */
+	@Override
+	public Language findLanguage(String lang) {
+		if (languages == null) {
+			languages = jdbcTemplate.query(SQL_FIND_ALL_LANGUAGES, this::mapRowToLanguage);
+		}
+		Iterator<Language> i = languages.iterator();
+		while (i.hasNext()) {
+			Language l = (Language) i.next();
+			if (l.getLanguage().equals(lang)) {
+				return l;
+			}
+		}		
+		return null;
+	}
+	
 	//---------------------------------------  Segment Type  ----------------------------------------- 
 	/**
 	 * find all SegmentTypes.
@@ -192,9 +212,9 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	public void deleteProject(Long projectId) {
 		Iterable<TranslationmemoryUnit> tus = findAllTUs(projectId);
 		for (TranslationmemoryUnit tu : tus) {
-			Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(tu.getId());
-			tuvs.forEach(tuv -> deleteTUV(tuv));
-			deleteTU(tu.getId());
+			Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(projectId, tu.getId());
+			tuvs.forEach(tuv -> deleteTUV(projectId, tu.getId(), tuv.getId()));
+			deleteTU(projectId, tu.getId());
 		}
 		jdbcTemplate.update(SQL_DELETE_PROJECT, projectId);
 	}
@@ -270,13 +290,15 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	 */
 	@Override
 	public TranslationmemoryUnit findMatchedTU(Long projectId, 
-			Language sourceLanguage, String segment, int matchRatioThreshold) {
+			Long matchRatioThreshold,
+			Language sourceLanguage, 
+			String segment) {
 		Iterator<TranslationmemoryUnit> i = findAllTUs(projectId).iterator();
 		TranslationmemoryUnit highestMatchedUnit = null;
 		int highestMatchedRatio = 0;
 		while (i.hasNext()) {
 			TranslationmemoryUnit tu = i.next();
-			Iterator<TranslationmemoryVariant> j = findAllTUVs(tu.getId()).iterator();
+			Iterator<TranslationmemoryVariant> j = findAllTUVs(projectId, tu.getId()).iterator();
 			while (j.hasNext()) {
 				TranslationmemoryVariant tuv = j.next();
 				if (tuv.getLanguage().equals(sourceLanguage)) {
@@ -292,21 +314,13 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	}
 	
 	/**
-	 * With default match ratio threshold
-	 */
-	public TranslationmemoryUnit findMatchedTU(Long projectId, 
-			Language sourceLanguage, String segment) {
-		return findMatchedTU(projectId, sourceLanguage, segment, MATCH_RATIO_THRESHOLD);
-	}
-	
-	/**
 	 *
 	 */
 	@Override
 	@Transactional	
-	public void deleteTU(Long tuId) {
-		Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(tuId);
-		tuvs.forEach(tuv -> deleteTUV(tuv));
+	public void deleteTU(Long projId, Long tuId) {
+		Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(projId, tuId);
+		tuvs.forEach(tuv -> deleteTUV(projId, tuId, tuv.getId()));
 		jdbcTemplate.update(SQL_DELETE_TU, tuId);
 	}
 	
@@ -314,24 +328,27 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	/**
 	 * find all TranslationmemoryUnitVariants in a TranslationmemoryUnit.
 	 * 
+	 * @param projId
 	 * @param tuId
 	 * @return
 	 */
 	@Override
-	public Iterable<TranslationmemoryVariant> findAllTUVs(Long tuId) {
-		return jdbcTemplate.query(SQL_FIND_ALL_TUVS, this::mapRowToTUV, tuId);
+	public Iterable<TranslationmemoryVariant> findAllTUVs(Long projId, Long tuId) {
+		return jdbcTemplate.query(SQL_FIND_ALL_TUVS, this::mapRowToTUV, tuId); //TODO: projectId is not used
 	}
 	
 	/**
 	 * To find a TranslationmemoryUnitVariant by its id.
 	 * 
-	 * @param id
+	 * @param projId
+	 * @param uId
+	 * @param tuvId
 	 * @return
 	 */
 	@Override
-	public TranslationmemoryVariant findTUV(Long id) {
-		try {
-			return jdbcTemplate.queryForObject(SQL_FIND_TUV, this::mapRowToTUV, id);
+	public TranslationmemoryVariant findTUV(Long projId, Long uId, Long tuvId) {
+		try {//TODO: projId and uId are not used
+			return jdbcTemplate.queryForObject(SQL_FIND_TUV, this::mapRowToTUV, tuvId);
 		} catch (Exception e) {
 			log.info("TUV not found: " + e.getMessage());
 			return null;	
@@ -341,19 +358,20 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	/**
 	 * To add a TranslationmemoryVariant to a TranslationmemoryUnit in the database. 
 	 * 
+	 * @param projId
 	 * @param tuId
 	 * @param tuv
 	 * @return
 	 */
 	@Override
-	public TranslationmemoryVariant addTUV(Long tuId, TranslationmemoryVariant tuv) {
+	public TranslationmemoryVariant addTUV(Long projId, Long tuId, TranslationmemoryVariant tuv) {
 		if (tuv.getId() == null) {
 			tuv.setId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
 		}
 		if (tuv.getCreateDate() == null) {
 			tuv.setCreateDate(Instant.now());
 		}
-		Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(tuId);
+		Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(projId, tuId);
 		for (TranslationmemoryVariant t : tuvs) {
 			if (t.getLanguage().equals(tuv.getLanguage())) {
 				throw new IllegalArgumentException("TranslationmemoryVariant's language already exists");
@@ -376,22 +394,30 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	 *
 	 */
 	@Override
-	public void deleteTUV(TranslationmemoryVariant tuv) {
-		jdbcTemplate.update(SQL_DELETE_TUV, tuv.getId());
+	public void deleteTUV(Long projId, Long uId, Long tuvId) {
+		jdbcTemplate.update(SQL_DELETE_TUV, tuvId); //TODO: projId and uId are not used
 	}
 	
 	/**
 	 * update a TranslationmemoryUnitVariant in the database.
 	 */
 	@Override
-	public void updateTUV(TranslationmemoryVariant tuv) {
-		jdbcTemplate.update(
+	public TranslationmemoryVariant updateTUV(Long projId, Long uId, TranslationmemoryVariant tuv) {
+		if (tuv == null || tuv.getId() == null) {
+			throw new IllegalArgumentException("TranslationmemoryVariant cannot be null");
+		}
+		tuv.setTuId(uId);
+		if (tuv.getUseDate() == null) {
+			tuv.setUseDate(Instant.now());
+		}
+		jdbcTemplate.update( //TODO: projId and uId are not used
 				SQL_UPDATE_TUV,
 				tuv.getSegment(),
 				tuv.getUseDate(),
 				tuv.getUseCount(),
 				tuv.isReviewed(),
 				tuv.getId());
+		return tuv;
 	}
 	
 	
@@ -470,6 +496,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 				row.getString("type"), 
 				row.getString("description"));
 	}
+
 
 
 }

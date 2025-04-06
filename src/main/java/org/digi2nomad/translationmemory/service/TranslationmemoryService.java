@@ -3,6 +3,7 @@ package org.digi2nomad.translationmemory.service;
 import java.util.List;
 
 import org.digi2nomad.translationmemory.data.TranslationmemoryRepository;
+import org.digi2nomad.translationmemory.data.dao.Language;
 import org.digi2nomad.translationmemory.service.dto.TranslationProjectDTO;
 import org.digi2nomad.translationmemory.service.dto.TranslationmemoryUnitDTO;
 import org.digi2nomad.translationmemory.service.dto.TranslationmemoryVariantDTO;
@@ -92,7 +93,8 @@ public class TranslationmemoryService {
 	 * @return
 	 */
 	public TranslationmemoryUnitDTO getUnit(Long projId, Long unitId) {
-		return TranslationmemoryUnitDTO.from(translationmemoryRepository.findTU(projId, unitId));
+		return TranslationmemoryUnitDTO.from(
+				translationmemoryRepository.findTU(projId, unitId));
 	}
 
 	/**
@@ -100,7 +102,7 @@ public class TranslationmemoryService {
 	 * @param unitId
 	 */
 	public void deleteUnit(Long projId, Long unitId) {
-		// TODO Auto-generated method stub
+		translationmemoryRepository.deleteTU(projId, unitId);
 	}
 
 	/**
@@ -109,8 +111,8 @@ public class TranslationmemoryService {
 	 * @return
 	 */
 	public List<TranslationmemoryVariantDTO> getVariants(Long projId, Long unitId) {
-		// TODO Auto-generated method stub
-		return null;
+		return TranslationmemoryVariantDTO.from(
+				translationmemoryRepository.findAllTUVs(projId, unitId));
 	}
 
 	/**
@@ -119,33 +121,52 @@ public class TranslationmemoryService {
 	 * @param variant
 	 * @return
 	 */
-	public TranslationmemoryVariantDTO createVariant(Long projId, Long unitId, TranslationmemoryVariantDTO variant) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @param projId
-	 * @param unitId
-	 * @param variantId
-	 * @return
-	 */
-	public TranslationmemoryVariantDTO getVariant(Long projId, Long unitId, Long variantId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @param projId
-	 * @param unitId
-	 * @param variantId
-	 * @param variant
-	 * @return
-	 */
-	public TranslationmemoryVariantDTO updateVariant(Long projId, Long unitId, Long variantId,
+	public TranslationmemoryVariantDTO createVariant(
+			Long projId, 
+			Long unitId, 
 			TranslationmemoryVariantDTO variant) {
-		// TODO Auto-generated method stub
-		return null;
+		return TranslationmemoryVariantDTO.from( 
+				translationmemoryRepository.addTUV(
+						projId, 
+						unitId, 
+						TranslationmemoryVariantDTO.to(variant)));
+	}
+
+	/**
+	 * @param projId
+	 * @param unitId
+	 * @param variantId
+	 * @return
+	 */
+	public TranslationmemoryVariantDTO getVariant(
+			Long projId, 
+			Long unitId, 
+			Long variantId) {
+		return TranslationmemoryVariantDTO.from( 
+				translationmemoryRepository.findTUV(
+						projId, 
+						unitId, 
+						variantId));
+	}
+
+	/**
+	 * @param projId
+	 * @param unitId
+	 * @param variantId
+	 * @param variant
+	 * @return
+	 */
+	public TranslationmemoryVariantDTO updateVariant(
+			Long projId, 
+			Long unitId, 
+			Long variantId,
+			TranslationmemoryVariantDTO variant) {
+		variant.setId(variantId);
+		return TranslationmemoryVariantDTO.from( 
+				translationmemoryRepository.updateTUV(
+						projId, 
+						unitId, 
+						TranslationmemoryVariantDTO.to(variant)));
 	}
 
 	/**
@@ -154,8 +175,7 @@ public class TranslationmemoryService {
 	 * @param variantId
 	 */
 	public void deleteVariant(Long projId, Long unitId, Long variantId) {
-		// TODO Auto-generated method stub
-		
+		translationmemoryRepository.deleteTUV(projId, unitId, variantId);
 	}
 	
 	/**
@@ -164,9 +184,17 @@ public class TranslationmemoryService {
 	 * @param srclang
 	 * @return
 	 */
-	public TranslationmemoryUnitDTO retrieveMatchedUnit(Long projId, Long ratio, String srclang) {
-		// TODO Auto-generated method stub
-		return null;
+	public TranslationmemoryUnitDTO retrieveMatchedUnit(Long projId, 
+			Long ratio, 
+			String srclang, 
+			String segment) {
+		Language sourceLanguage = translationmemoryRepository.findLanguage(srclang);
+		if (sourceLanguage == null) {
+			throw new IllegalArgumentException("Language not found: " + srclang);
+		}
+		return TranslationmemoryUnitDTO.from( 
+				translationmemoryRepository.findMatchedTU(projId,  
+						ratio, sourceLanguage, segment));
 	}
 
 	/**

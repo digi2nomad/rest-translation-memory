@@ -64,7 +64,7 @@ class TranslationmemoryRepositoryTests {
 		System.out.println("Found TU: " + tu12);
 		
 		TranslationmemoryVariant tuv11 = new TranslationmemoryVariant(tu11.getId(), new Language(), "segment");
-		tuv11 = repo.addTUV(tu11.getId(), tuv11);
+		tuv11 = repo.addTUV(proj1.getId(), tu11.getId(), tuv11);
 		assertThat(tuv11).isNotNull();
 		System.out.println("Created TUV: " + tuv11);
 		
@@ -86,7 +86,7 @@ class TranslationmemoryRepositoryTests {
 		System.out.println("Found TU: " + tu22);
 		
 		TranslationmemoryVariant tuv21 = new TranslationmemoryVariant(tu21.getId(), new Language(), "segment");
-		tuv21 = repo.addTUV(tu21.getId(), tuv21);
+		tuv21 = repo.addTUV(proj2.getId(), tu21.getId(), tuv21);
 		assertThat(tuv21).isNotNull();
 		System.out.println("Created TUV: " + tuv21);
 		
@@ -100,7 +100,7 @@ class TranslationmemoryRepositoryTests {
 			Iterable<TranslationmemoryUnit> tus = repo.findAllTUs(project.getId());
 			for (TranslationmemoryUnit tu : tus) {
 				System.out.println("TU: " + tu);
-				Iterable<TranslationmemoryVariant> tuvs = repo.findAllTUVs(tu.getId());
+				Iterable<TranslationmemoryVariant> tuvs = repo.findAllTUVs(project.getId(), tu.getId());
 				tuvs.forEach(tuv -> System.out.println("TUV: " + tuv));
 			}
 		}
@@ -120,13 +120,13 @@ class TranslationmemoryRepositoryTests {
 		System.out.println("Created TU: " + tu1);
 		
 		TranslationmemoryVariant tuv1 = new TranslationmemoryVariant(tu1.getId(), new Language(), "segment1");
-		tuv1 = repo.addTUV(tu1.getId(), tuv1);
+		tuv1 = repo.addTUV(project1.getId(), tu1.getId(), tuv1);
 		assertThat(tuv1).isNotNull();
 		System.out.println("Created TUV: " + tuv1);
 		
 		try {
 			TranslationmemoryVariant tuv2 = new TranslationmemoryVariant(tu1.getId(), new Language(), "segment2");
-			tuv2 = repo.addTUV(tu1.getId(), tuv2);
+			tuv2 = repo.addTUV(project1.getId(), tu1.getId(), tuv2);
 		} catch (IllegalArgumentException e) {
 			assertThat(e.getMessage()).isEqualTo("TranslationmemoryVariant's language already exists");
 		}
@@ -146,11 +146,11 @@ class TranslationmemoryRepositoryTests {
 		System.out.println("Created TU: " + tu1);
 		
 		TranslationmemoryVariant tuv1 = new TranslationmemoryVariant(tu1.getId(), new Language(), "S1234567890");
-		tuv1 = repo.addTUV(tu1.getId(), tuv1);
+		tuv1 = repo.addTUV(project1.getId(), tu1.getId(), tuv1);
 		assertThat(tuv1).isNotNull();
 		System.out.println("Created TUV: " + tuv1);
 		
-		TranslationmemoryUnit tu2 = repo.findMatchedTU(project1.getId(), new Language(), "S12356789");
+		TranslationmemoryUnit tu2 = repo.findMatchedTU(project1.getId(), 80L, new Language(), "S12356789");
 		assertThat(tu2).isNotNull();
 		System.out.println("Found matched TU: " + tu2);
 	}
@@ -190,7 +190,7 @@ class TranslationmemoryRepositoryTests {
 		assertThat(tu2).isNotNull();
 		System.out.println("Found TU: " + tu2);
 		
-		repo.deleteTU(tu2.getId());
+		repo.deleteTU(project1.getId(), tu2.getId());
 		System.out.println("Deleted TU: " + tu2);
 		
 		TranslationmemoryUnit tu3 = repo.findTU(project1.getId(), tu1.getId());
@@ -211,18 +211,18 @@ class TranslationmemoryRepositoryTests {
 		System.out.println("Created TU: " + tu1);
 		
 		TranslationmemoryVariant tuv1 = new TranslationmemoryVariant(tu1.getId(), new Language(), "segment");
-		tuv1 = repo.addTUV(tu1.getId(), tuv1);
+		tuv1 = repo.addTUV(project1.getId(), tu1.getId(), tuv1);
 		assertThat(tuv1).isNotNull();
 		System.out.println("Created TUV: " + tuv1);
 		
-		TranslationmemoryVariant tuv2 = repo.findTUV(tuv1.getId());
+		TranslationmemoryVariant tuv2 = repo.findTUV(project1.getId(), tu1.getId(), tuv1.getId());
 		assertThat(tuv2).isNotNull();
 		System.out.println("Found TUV: " + tuv2);
 		
-		repo.deleteTUV(tuv2);
+		repo.deleteTUV(project1.getId(), tu1.getId(), tuv2.getId());
 		System.out.println("Deleted TUV: " + tuv2);
 		
-		TranslationmemoryVariant tuv3 = repo.findTUV(tuv1.getId());
+		TranslationmemoryVariant tuv3 = repo.findTUV(project1.getId(), tu1.getId(), tuv1.getId());
 		assertThat(tuv3).isNull();
 		System.out.println("TUV not found: " + tuv3);
 	}	
@@ -263,19 +263,19 @@ class TranslationmemoryRepositoryTests {
 		System.out.println("Created TU: " + tu1);
 		
 		TranslationmemoryVariant tuv1 = new TranslationmemoryVariant(tu1.getId(), new Language(), "segment");
-		tuv1 = repo.addTUV(tu1.getId(), tuv1);
+		tuv1 = repo.addTUV(project1.getId(), tu1.getId(), tuv1);
 		assertThat(tuv1).isNotNull();
 		System.out.println("Created TUV: " + tuv1);
 		
-		TranslationmemoryVariant tuv2 = repo.findTUV(tuv1.getId());
+		TranslationmemoryVariant tuv2 = repo.findTUV(project1.getId(), tu1.getId(), tuv1.getId());
 		assertThat(tuv2).isNotNull();
 		System.out.println("Found TUV: " + tuv2);
 		
 		tuv2.setSegment("segment2");
-		repo.updateTUV(tuv2);
+		repo.updateTUV(project1.getId(), tu1.getId(), tuv2);
 		System.out.println("Updated TUV: " + tuv2);
 		
-		TranslationmemoryVariant tuv3 = repo.findTUV(tuv1.getId());
+		TranslationmemoryVariant tuv3 = repo.findTUV(project1.getId(), tu1.getId(), tuv1.getId());
 		assertThat(tuv3).isNotNull();
 		assertThat(tuv3.getSegment()).isEqualTo("segment2");
 		System.out.println("Found TUV: " + tuv3);
@@ -305,7 +305,7 @@ class TranslationmemoryRepositoryTests {
 	
 	@Test
 	void testFindAllTUVsNull() {
-		Iterable<TranslationmemoryVariant> tuvs = repo.findAllTUVs(null);
+		Iterable<TranslationmemoryVariant> tuvs = repo.findAllTUVs(null, null);
 		if (tuvs == null) {
 			System.out.println("No TUVs found");
 			return;

@@ -227,12 +227,13 @@ public class TranslationmemoryRestController {
 	 * @param srclang
 	 * @return
 	 */
-	@GetMapping("/projects/{id}/matchedunit/{ratio}/language/{language}")
+	@PostMapping("/projects/{id}/matchedunit/{ratio}/language/{language}")
 	public @ResponseBody TranslationmemoryUnitDTO retrieveMatchedUnitAndVariant(
 			@PathVariable Long projId, 
 			@PathVariable Long ratio, 
-			@PathVariable String srclang) {
-		return translationmemoryService.retrieveMatchedUnit(projId, ratio, srclang);
+			@PathVariable String srclang,
+			@RequestBody String segment) {
+		return translationmemoryService.retrieveMatchedUnit(projId, ratio, srclang, segment);
 	}
 	
 	/**
