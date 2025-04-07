@@ -276,7 +276,7 @@ insert into SegmentType (id, type, description)
 insert into SegmentType (id, type, description) 
                 values (2, 'paragraph', 'A paragraph');
 insert into SegmentType (id, type, description) 
-                values (3, 'senence', 'A sentence');
+                values (3, 'sentence', 'A sentence');
 insert into SegmentType (id, type, description) 
                 values (4, 'phrase', 'A phrase');
 
