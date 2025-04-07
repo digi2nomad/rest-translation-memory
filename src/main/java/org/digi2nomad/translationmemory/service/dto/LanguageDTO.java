@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class LanguageDTO {
 
-	private long id;
+	private Long id;
 	
 	@NotNull
 	@Size(max=3, message="LangCode must be less than 3 long")

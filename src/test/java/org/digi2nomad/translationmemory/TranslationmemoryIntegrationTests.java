@@ -1,5 +1,7 @@
 package org.digi2nomad.translationmemory;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -192,5 +194,142 @@ public class TranslationmemoryIntegrationTests {
 		 * Customization("createDate", (o1, o2) -> true)));
 		 */
 	}
+	
+	@Test
+	public void testRetrieveAndDeleteProjectById() throws JSONException, JsonMappingException, JsonProcessingException {
+		String url = "http://localhost:"+ port + "/projects";
+		HttpHeaders headers = new HttpHeaders();
+		
+		// Create a project 1: {"name": "EV Update", "description": "trending news of electric vehicles"}
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(
+				"{" +
+						"\"name\":\"EV Update\"," +
+						"\"description\":\"trending news of electric vehicles\"" +
+				"}", headers);		
+		TestRestTemplate restTemplate = new TestRestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		
+		String expected = 
+				"{" +
+						"\"id\" : 3782510073853855622," +
+						"\"name\" : \"EV Update\"," +
+						"\"description\" : \"trending news of electric vehicles\"," + 
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
+				"}";
+		String actual = response.getBody();
+		JSONAssert.assertEquals(expected, actual, 
+					new CustomComparator(
+						JSONCompareMode.LENIENT,
+						new Customization("id", (o1, o2) -> true),
+						new Customization("createDate", (o1, o2) -> true)));
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		TranslationProject actualProject 
+			= mapper.readValue(actual, TranslationProject.class);
+		Long projectId = actualProject.getId();
+		
+		// Retrieve the project
+		url = "http://localhost:"+ port + "/projects/" + projectId;
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		entity = new HttpEntity<String>(null, headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		expected = 
+				"{" +
+					"\"id\" : 3782510073853855622," +
+					"\"name\" : \"EV Update\"," +
+					"\"description\" : \"trending news of electric vehicles\"," +
+					"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
+				"}";
+		actual = response.getBody();
+		JSONAssert.assertEquals(expected, actual, 
+				new CustomComparator(
+					JSONCompareMode.LENIENT,
+					new Customization("id", (o1, o2) -> true),
+					new Customization("createDate", (o1, o2) -> true)));
+		
+		//
+		// Delete the project
+		//
+		url = "http://localhost:"+ port + "/projects/" + projectId;
+		headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		entity = new HttpEntity<String>(null, headers);
+		
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+		
+		expected = 	"Project deleted successfully";
+		actual = response.getBody();
+		assertThat(expected).isEqualTo(actual);
+	} // testRetrieveAndDeleteProjectById
+	
+	@Test
+	public void testCreateAndRetrieveAndDeleteTU () throws JSONException, JsonMappingException, JsonProcessingException {
+		String url = "http://localhost:"+ port + "/projects";
+		HttpHeaders headers = new HttpHeaders();
+		
+		// Create a project 1: {"name": "EV Update", "description": "trending news of electric vehicles"}
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(
+				"{" +
+						"\"name\":\"EV Update\"," +
+						"\"description\":\"trending news of electric vehicles\"" +
+				"}", headers);		
+		TestRestTemplate restTemplate = new TestRestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		
+		String expected = 
+				"{" +
+						"\"id\" : 3782510073853855622," +
+						"\"name\" : \"EV Update\"," +
+						"\"description\" : \"trending news of electric vehicles\"," + 
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
+				"}";
+		String actual = response.getBody();
+		JSONAssert.assertEquals(expected, actual, 
+					new CustomComparator(
+						JSONCompareMode.LENIENT,
+						new Customization("id", (o1, o2) -> true),
+						new Customization("createDate", (o1, o2) -> true)));
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		TranslationProject actualProject 
+			= mapper.readValue(actual, TranslationProject.class);
+		Long projectId = actualProject.getId();
+		
+		// Create a translation unit
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units";
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		entity = new HttpEntity<String>(
+				"{" +
+					  "\"projId\": " + projectId + "," +
+					  "\"segmentType\": { " +
+					    "\"type\": \"sentence\"" +
+					  "}" +
+				"}", headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		expected = 
+				"{" +
+						"\"id\" : 3782510073853855622," +
+						"\"projId\" : 3782510073853855622," + 
+						"\"segmentType\" : {" +
+							"\"id\" : 3782510073853855622," +
+							"\"type\" : \"sentence\"," +
+							"\"description\" : \"A sentence\"" +
+							"}," +
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
+				"}";
+		actual = response.getBody();
+		
+	} // testCreateAndRetrieveAndDeleteTU
 	
 }

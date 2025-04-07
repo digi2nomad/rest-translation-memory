@@ -60,9 +60,9 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 	}
 	
 	@Override
-	public void deleteProject(Long projectId) {
+	public String deleteProject(Long projectId) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 	
 	@Override
@@ -97,9 +97,9 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 	
 	
 	@Override
-	public void deleteTU(Long projId, Long tuId) {
+	public String deleteTU(Long projId, Long tuId) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 	
 	@Override
@@ -122,9 +122,9 @@ public class TranslationmemoryRepositoryJPA implements TranslationmemoryReposito
 	}
 
 	@Override
-	public void deleteTUV(Long projId, Long tuId, Long tuvId) {
+	public String deleteTUV(Long projId, Long tuId, Long tuvId) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 	
 	@Override

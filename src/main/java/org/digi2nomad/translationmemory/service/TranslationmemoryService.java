@@ -64,8 +64,8 @@ public class TranslationmemoryService {
 	/**
 	 * @param projId
 	 */
-	public void deleteProject(Long projId) {
-		translationmemoryRepository.deleteProject(projId);
+	public String deleteProject(Long projId) {
+		return translationmemoryRepository.deleteProject(projId);
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class TranslationmemoryService {
 	 * @param projId
 	 * @param unitId
 	 */
-	public void deleteUnit(Long projId, Long unitId) {
-		translationmemoryRepository.deleteTU(projId, unitId);
+	public String deleteUnit(Long projId, Long unitId) {
+		return translationmemoryRepository.deleteTU(projId, unitId);
 	}
 
 	/**
@@ -174,8 +174,8 @@ public class TranslationmemoryService {
 	 * @param unitId
 	 * @param variantId
 	 */
-	public void deleteVariant(Long projId, Long unitId, Long variantId) {
-		translationmemoryRepository.deleteTUV(projId, unitId, variantId);
+	public String deleteVariant(Long projId, Long unitId, Long variantId) {
+		return translationmemoryRepository.deleteTUV(projId, unitId, variantId);
 	}
 	
 	/**
@@ -185,7 +185,7 @@ public class TranslationmemoryService {
 	 * @return
 	 */
 	public TranslationmemoryUnitDTO retrieveMatchedUnit(Long projId, 
-			Long ratio, 
+			Long matchRatioThreshold, 
 			String srclang, 
 			String segment) {
 		Language sourceLanguage = translationmemoryRepository.findLanguage(srclang);
@@ -194,7 +194,7 @@ public class TranslationmemoryService {
 		}
 		return TranslationmemoryUnitDTO.from( 
 				translationmemoryRepository.findMatchedTU(projId,  
-						ratio, sourceLanguage, segment));
+						matchRatioThreshold, sourceLanguage, segment));
 	}
 
 	/**

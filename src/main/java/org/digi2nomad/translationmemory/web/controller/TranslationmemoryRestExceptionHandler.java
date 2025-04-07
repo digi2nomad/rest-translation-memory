@@ -21,7 +21,21 @@ public class TranslationmemoryRestExceptionHandler {
 	 */
 	@ExceptionHandler(NoResourceFoundException.class)
 	public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex) {
-		ErrorResponse errorResponse = ErrorResponse.create(ex, HttpStatus.NOT_FOUND, "The requested resource was not found");
+		ErrorResponse errorResponse = ErrorResponse.create(ex, 
+				HttpStatus.NOT_FOUND, "The requested resource was not found");
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
+	
+    /**
+     * return 400
+     * 
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+    	ErrorResponse errorResponse = ErrorResponse.create(ex, 
+    			HttpStatus.BAD_REQUEST, "Invalid argument provided");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

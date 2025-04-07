@@ -79,7 +79,7 @@ public class TranslationmemoryRestController {
 	 * @return
 	 */
 	@GetMapping("/projects/{id}")
-	public @ResponseBody TranslationProjectDTO getProject(@PathVariable Long projId) {
+	public @ResponseBody TranslationProjectDTO getProject(@PathVariable("id") Long projId) {
 		return translationmemoryService.getProject(projId);
 	}
 	
@@ -89,7 +89,7 @@ public class TranslationmemoryRestController {
 	 * @return
 	 */
 	@PutMapping("/projects/{id}")
-	public @ResponseBody TranslationProjectDTO updateProject(@PathVariable Long projId, 
+	public @ResponseBody TranslationProjectDTO updateProject(@PathVariable("id") Long projId, 
 			@Valid @RequestBody TranslationProjectDTO project) {
 		return translationmemoryService.updateProject(projId, project);
 	}
@@ -98,8 +98,8 @@ public class TranslationmemoryRestController {
 	 * @param projId
 	 */
 	@DeleteMapping("/projects/{id}")
-	public void deleteProject(@PathVariable Long projId) {
-		translationmemoryService.deleteProject(projId);
+	public @ResponseBody String deleteProject(@PathVariable("id") Long projId) {
+		return translationmemoryService.deleteProject(projId);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class TranslationmemoryRestController {
 	 * @return
 	 */
 	@GetMapping("/projects/{id}/units")
-	public @ResponseBody List<TranslationmemoryUnitDTO> getUnits(@PathVariable Long projId) {
+	public @ResponseBody List<TranslationmemoryUnitDTO> getUnits(@PathVariable("id") Long projId) {
 		return translationmemoryService.getUnits(projId);
 	}
 	
@@ -117,7 +117,7 @@ public class TranslationmemoryRestController {
 	 * @return
 	 */
 	@PostMapping("/projects/{id}/units")
-	public @ResponseBody TranslationmemoryUnitDTO createUnit(@PathVariable Long projId, 
+	public @ResponseBody TranslationmemoryUnitDTO createUnit(@PathVariable("id") Long projId, 
 			@Valid @RequestBody TranslationmemoryUnitDTO unit) {
 		return translationmemoryService.createUnit(projId, unit);
 	}
@@ -127,9 +127,9 @@ public class TranslationmemoryRestController {
 	 * @param unitId
 	 * @return
 	 */
-	@GetMapping("/projects/{id}/units/{unitId}")
-	public @ResponseBody TranslationmemoryUnitDTO getUnit(@PathVariable Long projId, 
-			@PathVariable Long unitId) {
+	@GetMapping("/projects/{id}/units/{uId}")
+	public @ResponseBody TranslationmemoryUnitDTO getUnit(@PathVariable("id") Long projId, 
+			@PathVariable("uId") Long unitId) {
 		return translationmemoryService.getUnit(projId, unitId);
 	}
 	
@@ -149,9 +149,9 @@ public class TranslationmemoryRestController {
 	 * @param projId
 	 * @param unitId
 	 */
-	@DeleteMapping("/projects/{id}/units/{unitId}")
-	public void deleteUnit(@PathVariable Long projId, @PathVariable Long unitId) {
-		translationmemoryService.deleteUnit(projId, unitId);
+	@DeleteMapping("/projects/{id}/units/{uId}")
+	public @ResponseBody String deleteUnit(@PathVariable("id") Long projId, @PathVariable("uId") Long unitId) {
+		return translationmemoryService.deleteUnit(projId, unitId);
 	}	
 
 	/**
@@ -159,9 +159,9 @@ public class TranslationmemoryRestController {
 	 * @param unitId
 	 * @return
 	 */
-	@GetMapping("/projects/{id}/units/{unitId}/variants")
-	public @ResponseBody List<TranslationmemoryVariantDTO> getVariants(@PathVariable Long projId, 
-			@PathVariable Long unitId) {
+	@GetMapping("/projects/{id}/units/{uId}/variants")
+	public @ResponseBody List<TranslationmemoryVariantDTO> getVariants(@PathVariable("id") Long projId, 
+			@PathVariable("uId") Long unitId) {
 		return translationmemoryService.getVariants(projId, unitId);
 	}
 	
@@ -171,9 +171,9 @@ public class TranslationmemoryRestController {
 	 * @param variant
 	 * @return
 	 */
-	@PostMapping("/projects/{id}/units/{unitId}/variants")
-	public @ResponseBody TranslationmemoryVariantDTO createVariant(@PathVariable Long projId, 
-			@PathVariable Long unitId, @Valid @RequestBody TranslationmemoryVariantDTO variant) {
+	@PostMapping("/projects/{id}/units/{uId}/variants")
+	public @ResponseBody TranslationmemoryVariantDTO createVariant(@PathVariable("id") Long projId, 
+			@PathVariable("uId") Long unitId, @Valid @RequestBody TranslationmemoryVariantDTO variant) {
 		return translationmemoryService.createVariant(projId, unitId, 
 				variant);
 	}
@@ -184,9 +184,9 @@ public class TranslationmemoryRestController {
 	 * @param variantId
 	 * @return
 	 */
-	@GetMapping("/projects/{id}/units/{unitId}/variants/{variantId}")
-	public @ResponseBody TranslationmemoryVariantDTO getVariant(@PathVariable Long projId, 
-			@PathVariable Long unitId, @PathVariable Long variantId) {
+	@GetMapping("/projects/{id}/units/{uId}/variants/{uvId}")
+	public @ResponseBody TranslationmemoryVariantDTO getVariant(@PathVariable("id") Long projId, 
+			@PathVariable("uId") Long unitId, @PathVariable("uvId") Long variantId) {
 		return translationmemoryService.getVariant(projId, unitId, variantId);
 	}
 	
@@ -197,10 +197,10 @@ public class TranslationmemoryRestController {
 	 * @param variant
 	 * @return
 	 */
-	@PutMapping("/projects/{id}/units/{unitId}/variants/{variantId}")
-	public @ResponseBody TranslationmemoryVariantDTO updateVariant(@PathVariable Long projId, 
-				@PathVariable Long unitId, 
-				@PathVariable Long variantId, 
+	@PutMapping("/projects/{id}/units/{uId}/variants/{uvId}")
+	public @ResponseBody TranslationmemoryVariantDTO updateVariant(@PathVariable("id") Long projId, 
+				@PathVariable("uId") Long unitId, 
+				@PathVariable("uvId") Long variantId, 
 				@Valid @RequestBody 
 				TranslationmemoryVariantDTO variant) {
 		return translationmemoryService.updateVariant(
@@ -215,10 +215,10 @@ public class TranslationmemoryRestController {
 	 * @param unitId
 	 * @param variantId
 	 */
-	@DeleteMapping("/projects/{id}/units/{unitId}/variants/{variantId}")
-	public void deleteVariant(@PathVariable Long projId, 
-			@PathVariable Long unitId, @PathVariable Long variantId) {
-		translationmemoryService.deleteVariant(projId, unitId, variantId);
+	@DeleteMapping("/projects/{id}/units/{uId}/variants/{uvId}")
+	public @ResponseBody String deleteVariant(@PathVariable("id") Long projId, 
+			@PathVariable("uId") Long unitId, @PathVariable("uvId") Long variantId) {
+		return translationmemoryService.deleteVariant(projId, unitId, variantId);
 	}
 	
 	/**
@@ -229,11 +229,11 @@ public class TranslationmemoryRestController {
 	 */
 	@PostMapping("/projects/{id}/matchedunit/{ratio}/language/{language}")
 	public @ResponseBody TranslationmemoryUnitDTO retrieveMatchedUnitAndVariant(
-			@PathVariable Long projId, 
-			@PathVariable Long ratio, 
-			@PathVariable String srclang,
+			@PathVariable("id") Long projId, 
+			@PathVariable("ratio") Long matchRatioThreshold, 
+			@PathVariable("language") String srclang,
 			@RequestBody String segment) {
-		return translationmemoryService.retrieveMatchedUnit(projId, ratio, srclang, segment);
+		return translationmemoryService.retrieveMatchedUnit(projId, matchRatioThreshold, srclang, segment);
 	}
 	
 	/**
@@ -241,10 +241,10 @@ public class TranslationmemoryRestController {
 	 * @param unitId
 	 * @return
 	 */
-	@GetMapping("/projects/{id}/unitandvariants/{unitId}")
+	@GetMapping("/projects/{id}/unitandvariants/{uId}")
 	public @ResponseBody TranslationmemoryUnitDTO retrieveUnitAndVariants(
-			@PathVariable Long projId, 
-			@PathVariable Long unitId) {
+			@PathVariable("id") Long projId, 
+			@PathVariable("uId") Long unitId) {
 		return translationmemoryService.retrieveUnit(projId, unitId);
 	}
 	

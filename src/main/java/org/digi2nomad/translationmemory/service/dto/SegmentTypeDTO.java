@@ -10,7 +10,7 @@ import lombok.Data;
 public class SegmentTypeDTO {
 	
 
-	private long id;
+	private Long id;
 	
 	@NotNull
 	@Size(max=9, message="Type must be less than 9 long")
@@ -19,6 +19,7 @@ public class SegmentTypeDTO {
 	@NotNull
 	@Size(max=20, message="Description must be less than 20 long")
 	private String description;
+
 	/**
 	 * @param id
 	 * @param type

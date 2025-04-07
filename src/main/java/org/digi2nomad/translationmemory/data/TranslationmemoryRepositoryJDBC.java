@@ -209,7 +209,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	 */
 	@Override 
 	@Transactional
-	public void deleteProject(Long projectId) {
+	public String deleteProject(Long projectId) {
 		Iterable<TranslationmemoryUnit> tus = findAllTUs(projectId);
 		for (TranslationmemoryUnit tu : tus) {
 			Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(projectId, tu.getId());
@@ -217,6 +217,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 			deleteTU(projectId, tu.getId());
 		}
 		jdbcTemplate.update(SQL_DELETE_PROJECT, projectId);
+		return "Project deleted successfully"; //TODO: capture the deleted object identifiers
 	}
 	
 	/**
@@ -318,10 +319,11 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	 */
 	@Override
 	@Transactional	
-	public void deleteTU(Long projId, Long tuId) {
+	public String deleteTU(Long projId, Long tuId) {
 		Iterable<TranslationmemoryVariant> tuvs = findAllTUVs(projId, tuId);
 		tuvs.forEach(tuv -> deleteTUV(projId, tuId, tuv.getId()));
 		jdbcTemplate.update(SQL_DELETE_TU, tuId);
+		return "TU deleted successfully"; //TODO: capture the deleted object identifiers
 	}
 	
 	//---------------------------------------  TUV  -----------------------------------------
@@ -394,8 +396,9 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 	 *
 	 */
 	@Override
-	public void deleteTUV(Long projId, Long uId, Long tuvId) {
+	public String deleteTUV(Long projId, Long uId, Long tuvId) {
 		jdbcTemplate.update(SQL_DELETE_TUV, tuvId); //TODO: projId and uId are not used
+		return "TUV deleted successfully"; //TODO: capture the deleted object identifiers
 	}
 	
 	/**

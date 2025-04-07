@@ -59,7 +59,7 @@ public interface TranslationmemoryRepository {
 	/**
 	 * @param project
 	 */
-	void deleteProject(Long projectId);
+	String deleteProject(Long projectId);
 	
 	/**
 	 * @param project
@@ -105,7 +105,7 @@ public interface TranslationmemoryRepository {
 	 * @param projId
 	 * @param tuId
 	 */
-	void deleteTU(Long projId, Long tuId);
+	String deleteTU(Long projId, Long tuId);
 	
 		
 	//---------------------------------------------------------
@@ -138,7 +138,7 @@ public interface TranslationmemoryRepository {
 	 * @param tuId
 	 * @param tuvId
 	 */
-	void deleteTUV(Long projId, Long tuId, Long tuvId);
+	String deleteTUV(Long projId, Long tuId, Long tuvId);
 	
 	/**
 	 * @param projId
