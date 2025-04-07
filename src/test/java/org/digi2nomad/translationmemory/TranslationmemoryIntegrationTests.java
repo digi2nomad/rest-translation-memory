@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.digi2nomad.translationmemory.data.dao.TranslationProject;
+import org.digi2nomad.translationmemory.service.dto.TranslationmemoryUnitDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -35,6 +35,32 @@ public class TranslationmemoryIntegrationTests {
 	
 	@LocalServerPort
 	private int port;
+	
+	/**
+	 * @param expected
+	 * @param actual
+	 * @throws JSONException
+	 */
+	static void jsonAssertEqualsEscapeTimestamp (String expected, String actual) 
+			throws JSONException {
+		JSONAssert.assertEquals(expected, actual, new CustomComparator(
+				JSONCompareMode.LENIENT,
+				new Customization("timestamp", (o1, o2) -> true)));
+	}
+	
+	/**
+	 * @param expected
+	 * @param actual
+	 * @throws JSONException
+	 */
+	static void jsonAssertEqualsEscapeIdnCreateDate (String expected, String actual) 
+			throws JSONException {
+		JSONAssert.assertEquals(expected, actual, 
+				new CustomComparator(
+					JSONCompareMode.LENIENT,
+					new Customization("id", (o1, o2) -> true),
+					new Customization("createDate", (o1, o2) -> true)));
+	}
 	
 	@Test
 	public void testCreateProjectWithMalformedJson() throws JSONException {
@@ -56,12 +82,8 @@ public class TranslationmemoryIntegrationTests {
 			  "\"error\" : \"Bad Request\"," +
 			  "\"path\" : \"/projects\"" +
 		"}";
-		HttpStatusCode statusCode = response.getStatusCode();
-		assert(statusCode.is4xxClientError());
-		String actual = response.getBody();
-		JSONAssert.assertEquals(expected, actual, new CustomComparator(
-				JSONCompareMode.LENIENT,
-				new Customization("timestamp", (o1, o2) -> true)));
+		assert(response.getStatusCode().is4xxClientError());
+		jsonAssertEqualsEscapeTimestamp (expected, response.getBody());
 	}
 	
 	@Test
@@ -141,12 +163,7 @@ public class TranslationmemoryIntegrationTests {
 						"\"description\" : \"trending news of electric vehicles\"," + 
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		String actual = response.getBody();
-		JSONAssert.assertEquals(expected, actual, 
-					new CustomComparator(
-						JSONCompareMode.LENIENT,
-						new Customization("id", (o1, o2) -> true),
-						new Customization("createDate", (o1, o2) -> true)));
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
 		
 		// Create a project 2: {"name": "Semiconductor Update", "description": "trending news of semiconductors industry"}
 		entity = new HttpEntity<String>(
@@ -181,17 +198,14 @@ public class TranslationmemoryIntegrationTests {
 		List<TranslationProject> expectedProjects 
 			= mapper.readValue(expected, new TypeReference<List<TranslationProject>>() {});
 				
-		actual = response.getBody();
 		List<TranslationProject> actualProjects 
-			= mapper.readValue(actual, new TypeReference<List<TranslationProject>>() {});
+			= mapper.readValue(response.getBody(), new TypeReference<List<TranslationProject>>() {});
 		
 		JSONArray expectedJson = new JSONArray(expected);
-		JSONArray actualJson = new JSONArray(actual);
+		JSONArray actualJson = new JSONArray(response.getBody());
 		JSONAssert.assertEquals(expectedJson, actualJson, false);
 		/*
-		 * JSONAssert.assertEquals(expected, actual, new CustomComparator(
-		 * JSONCompareMode.LENIENT, new Customization("id", (o1, o2) -> true), new
-		 * Customization("createDate", (o1, o2) -> true)));
+		 * jsonAssertEqualsEspcapeIdnCreateDate (expected, response.getBody()); 
 		 */
 	}
 	
@@ -244,12 +258,7 @@ public class TranslationmemoryIntegrationTests {
 					"\"description\" : \"trending news of electric vehicles\"," +
 					"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		actual = response.getBody();
-		JSONAssert.assertEquals(expected, actual, 
-				new CustomComparator(
-					JSONCompareMode.LENIENT,
-					new Customization("id", (o1, o2) -> true),
-					new Customization("createDate", (o1, o2) -> true)));
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
 		
 		//
 		// Delete the project
@@ -269,7 +278,7 @@ public class TranslationmemoryIntegrationTests {
 	} // testRetrieveAndDeleteProjectById
 	
 	@Test
-	public void testCreateAndRetrieveAndDeleteTU () throws JSONException, JsonMappingException, JsonProcessingException {
+	public void testCreateAndRetrieveAndDeleteTUById () throws JSONException, JsonMappingException, JsonProcessingException {
 		String url = "http://localhost:"+ port + "/projects";
 		HttpHeaders headers = new HttpHeaders();
 		
@@ -291,17 +300,12 @@ public class TranslationmemoryIntegrationTests {
 						"\"description\" : \"trending news of electric vehicles\"," + 
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		String actual = response.getBody();
-		JSONAssert.assertEquals(expected, actual, 
-					new CustomComparator(
-						JSONCompareMode.LENIENT,
-						new Customization("id", (o1, o2) -> true),
-						new Customization("createDate", (o1, o2) -> true)));
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
 		TranslationProject actualProject 
-			= mapper.readValue(actual, TranslationProject.class);
+			= mapper.readValue(response.getBody(), TranslationProject.class);
 		Long projectId = actualProject.getId();
 		
 		// Create a translation unit
@@ -317,19 +321,61 @@ public class TranslationmemoryIntegrationTests {
 				"}", headers);
 		restTemplate = new TestRestTemplate();
 		response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		
+		mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		TranslationmemoryUnitDTO actualTU
+			= mapper.readValue(response.getBody(), TranslationmemoryUnitDTO.class);
+		Long uId = actualTU.getId();
+		Long segmentTypeId = actualTU.getSegmentType().getId();
 		expected = 
 				"{" +
 						"\"id\" : 3782510073853855622," +
-						"\"projId\" : 3782510073853855622," + 
+						"\"projId\" :" + projectId + "," +
 						"\"segmentType\" : {" +
-							"\"id\" : 3782510073853855622," +
+							"\"id\" : " + segmentTypeId + "," +
 							"\"type\" : \"sentence\"," +
 							"\"description\" : \"A sentence\"" +
 							"}," +
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		actual = response.getBody();
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+
 		
-	} // testCreateAndRetrieveAndDeleteTU
+		//
+		// Retrieve the translation unit
+		//
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units/" + uId;
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		entity = new HttpEntity<String>(null, headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		expected = 
+				"{" +
+						"\"id\" : 3782510073853855622," +
+						"\"projId\" :" + projectId + "," +
+						"\"segmentType\" : {" +
+							"\"id\" : " + segmentTypeId + "," +
+							"\"type\" : \"sentence\"," +
+							"\"description\" : \"A sentence\"" +
+							"}," +
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
+				"}";
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody());
+		
+		//
+		// Delete the translation unit
+		//
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units/" + uId;
+		headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		entity = new HttpEntity<String>(null, headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+		expected = 	"TU deleted successfully";
+		assertThat(response.getBody()).isEqualTo(expected);		
+		
+	} // testCreateAndRetrieveAndDeleteTUById
 	
 }
