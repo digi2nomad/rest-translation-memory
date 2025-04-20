@@ -54,13 +54,14 @@ public class TranslationmemoryIntegrationTests {
 	 * @param actual
 	 * @throws JSONException
 	 */
-	static void jsonAssertEqualsEscapeIdnCreateDate (String expected, String actual) 
+	static void jsonAssertEqualsEscapeIdnDate (String expected, String actual) 
 			throws JSONException {
 		JSONAssert.assertEquals(expected, actual, 
 				new CustomComparator(
 					JSONCompareMode.LENIENT,
 					new Customization("id", (o1, o2) -> true),
-					new Customization("createDate", (o1, o2) -> true)));
+					new Customization("createDate", (o1, o2) -> true),
+					new Customization("useDate", (o1, o2) -> true)));
 	}
 	
 	@Test
@@ -164,7 +165,7 @@ public class TranslationmemoryIntegrationTests {
 						"\"description\" : \"trending news of electric vehicles\"," + 
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody()); 
 		
 		// Create a project 2: {"name": "Semiconductor Update", "description": "trending news of semiconductors industry"}
 		entity = new HttpEntity<String>(
@@ -234,11 +235,7 @@ public class TranslationmemoryIntegrationTests {
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
 		String actual = response.getBody();
-		JSONAssert.assertEquals(expected, actual, 
-					new CustomComparator(
-						JSONCompareMode.LENIENT,
-						new Customization("id", (o1, o2) -> true),
-						new Customization("createDate", (o1, o2) -> true)));
+		jsonAssertEqualsEscapeIdnDate (expected, actual);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
@@ -259,7 +256,7 @@ public class TranslationmemoryIntegrationTests {
 					"\"description\" : \"trending news of electric vehicles\"," +
 					"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody()); 
 		
 		//
 		// Delete the project
@@ -301,7 +298,7 @@ public class TranslationmemoryIntegrationTests {
 						"\"description\" : \"trending news of electric vehicles\"," + 
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody()); 
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
@@ -340,7 +337,7 @@ public class TranslationmemoryIntegrationTests {
 							"}," +
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody()); 
 
 		
 		//
@@ -362,7 +359,7 @@ public class TranslationmemoryIntegrationTests {
 							"}," +
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody());
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody());
 		
 		//
 		// Delete the translation unit
@@ -403,7 +400,7 @@ public class TranslationmemoryIntegrationTests {
 						"\"description\" : \"trending news of electric vehicles\"," + 
 						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody()); 
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
@@ -441,7 +438,7 @@ public class TranslationmemoryIntegrationTests {
 							"\"description\" : \"A sentence\"" +
 							"}" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody()); 
 
 		//
 		// Create a translation unit variant
@@ -479,7 +476,7 @@ public class TranslationmemoryIntegrationTests {
 						"\"useCount\" : 0," +
 						"\"reviewed\" : false" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody());
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody());
 		
 		//
 		// Retrieve the translation unit variant
@@ -504,7 +501,44 @@ public class TranslationmemoryIntegrationTests {
 						"\"useCount\" : 0," +
 						"\"reviewed\" : false" +
 				"}";
-		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody());
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody());
+		
+		//
+		// Update the translation unit variant
+		//
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units/" + tuId + "/variants/" + tuvId;
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		entity = new HttpEntity<String>(
+				"{" +
+						  "\"tuId\":" + tuId +"," +
+						  "\"language\": {" +
+						    "\"langcode\": \"en-US\"" +
+						  "}," +
+						  "\"segment\": \"string updated\"" +
+				"}", headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+		mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		actualTUV
+			= mapper.readValue(response.getBody(), TranslationmemoryVariantDTO.class);
+		expected = 
+				"{" +
+						"\"id\" : " + tuvId + "," +
+						"\"tuId\" :" + tuId + "," +
+						"\"language\" : {" +
+						    "\"id\" : 103," +
+						    "\"langcode\" : \"en-US\"," +
+						    "\"language\" : \"English\"" +
+						"}," +
+						"\"segment\" : \"string updated\"," +
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"," +
+						"\"useDate\" : \"2025-03-31T23:16:37.199148900Z\"," +
+						"\"useCount\" : 0," +
+						"\"reviewed\" : false" +
+				"}";
+		jsonAssertEqualsEscapeIdnDate (expected, response.getBody());
 
 		//
 		// Delete the translation unit variant
