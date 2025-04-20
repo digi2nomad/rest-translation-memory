@@ -1,6 +1,6 @@
 create table if not exists Language (
 	id identity,
-	langcode varchar(3) not null,
+	langcode varchar(5) not null,
 	language varchar(20) not null
 );
 

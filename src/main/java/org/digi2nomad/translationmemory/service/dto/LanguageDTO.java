@@ -38,7 +38,7 @@ public class LanguageDTO {
 	 */
 	public LanguageDTO() {
 		this.id = 103L;
-		this.langcode = "en";
+		this.langcode = "en-US";
 		this.language = "English";
 	}
 

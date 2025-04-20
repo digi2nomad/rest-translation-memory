@@ -27,7 +27,7 @@ public class Language {
 	 */
 	public Language() {
 		this.id = 103L;
-		this.langcode = "en";
+		this.langcode = "en-US";
 		this.language = "English";
 	}
 

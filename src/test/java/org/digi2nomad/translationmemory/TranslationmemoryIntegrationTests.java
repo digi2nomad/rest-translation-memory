@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.digi2nomad.translationmemory.data.dao.TranslationProject;
 import org.digi2nomad.translationmemory.service.dto.TranslationmemoryUnitDTO;
+import org.digi2nomad.translationmemory.service.dto.TranslationmemoryVariantDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
@@ -377,5 +378,147 @@ public class TranslationmemoryIntegrationTests {
 		assertThat(response.getBody()).isEqualTo(expected);		
 		
 	} // testCreateAndRetrieveAndDeleteTUById
+	
+	@Test
+	public void testCreateAndRetrieveAndDeleteTUVById() 
+			throws JSONException, JsonMappingException, JsonProcessingException {
+		String url = "http://localhost:"+ port + "/projects";
+		HttpHeaders headers = new HttpHeaders();
+		
+		// Create a project 1: {"name": "EV Update", "description": "trending news of electric vehicles"}
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(
+				"{" +
+						"\"name\":\"EV Update\"," +
+						"\"description\":\"trending news of electric vehicles\"" +
+				"}", headers);		
+		TestRestTemplate restTemplate = new TestRestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		
+		String expected = 
+				"{" +
+						"\"id\" : 3782510073853855622," +
+						"\"name\" : \"EV Update\"," +
+						"\"description\" : \"trending news of electric vehicles\"," + 
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"" +
+				"}";
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		TranslationProject actualProject 
+			= mapper.readValue(response.getBody(), TranslationProject.class);
+		Long projectId = actualProject.getId();
+		
+		// Create a translation unit
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units";
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		entity = new HttpEntity<String>(
+				"{" +
+					  "\"projId\": " + projectId + "," +
+					  "\"segmentType\": { " +
+					    "\"type\": \"sentence\"" +
+					  "}" +
+				"}", headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		
+		mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		TranslationmemoryUnitDTO actualTU
+			= mapper.readValue(response.getBody(), TranslationmemoryUnitDTO.class);
+		Long tuId = actualTU.getId();
+		Long segmentTypeId = actualTU.getSegmentType().getId();
+		expected = 
+				"{" +
+						"\"id\" : 3782510073853855622," +
+						"\"projId\" :" + projectId + "," +
+						"\"segmentType\" : {" +
+							"\"id\" : " + segmentTypeId + "," +
+							"\"type\" : \"sentence\"," +
+							"\"description\" : \"A sentence\"" +
+							"}" +
+				"}";
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody()); 
+
+		//
+		// Create a translation unit variant
+		//
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units/" + tuId + "/variants";
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		entity = new HttpEntity<String>(
+				"{" +
+						  "\"tuId\":" + tuId +"," +
+						  "\"language\": {" +
+						    "\"langcode\": \"en-US\"" +
+						  "}," +
+						  "\"segment\": \"string\"" +
+				"}", headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		TranslationmemoryVariantDTO actualTUV
+			= mapper.readValue(response.getBody(), TranslationmemoryVariantDTO.class);
+		Long tuvId = actualTUV.getId();
+		expected = 
+				"{" +
+						"\"id\" : " + tuvId + "," +
+						"\"tuId\" :" + tuId + "," +
+						"\"language\" : {" +
+						    "\"id\" : 103," +
+						    "\"langcode\" : \"en-US\"," +
+						    "\"language\" : \"English\"" +
+						"}," +
+						"\"segment\" : \"string\"," +
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"," +
+						"\"useDate\" : null," +
+						"\"useCount\" : 0," +
+						"\"reviewed\" : false" +
+				"}";
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody());
+		
+		//
+		// Retrieve the translation unit variant
+		//
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units/" + tuId + "/variants/" + tuvId;
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		entity = new HttpEntity<String>(null, headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		expected = 
+				"{" +
+						"\"id\" : " + tuvId + "," +
+						"\"tuId\" :" + tuId + "," +
+						"\"language\" : {" +
+						    "\"id\" : 103," +
+						    "\"langcode\" : \"en-US\"," +
+						    "\"language\" : \"English\"" +
+						"}," +
+						"\"segment\" : \"string\"," +
+						"\"createDate\" : \"2025-03-31T23:16:37.199148900Z\"," +
+						"\"useDate\" : null," +
+						"\"useCount\" : 0," +
+						"\"reviewed\" : false" +
+				"}";
+		jsonAssertEqualsEscapeIdnCreateDate (expected, response.getBody());
+
+		//
+		// Delete the translation unit variant
+		//
+		url = "http://localhost:"+ port + "/projects/" + projectId + "/units/" + tuId + "/variants/" + tuvId;
+		headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		entity = new HttpEntity<String>(null, headers);
+		restTemplate = new TestRestTemplate();
+		response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+		expected = 	"TUV deleted successfully";
+		assertThat(response.getBody()).isEqualTo(expected);
+		
+	} // testCreateAndRetrieveAndDeleteTUVById
 	
 }

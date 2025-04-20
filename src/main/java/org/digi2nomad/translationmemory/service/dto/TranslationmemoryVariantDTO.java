@@ -19,7 +19,8 @@ public class TranslationmemoryVariantDTO {
 
 	private Long id;
 	
-	private TranslationmemoryUnitDTO tu;
+	@NotNull
+	private Long tuId;
 	
 	@NotNull
 	private LanguageDTO language;
@@ -44,7 +45,7 @@ public class TranslationmemoryVariantDTO {
 		if (variant != null) {
 			TranslationmemoryVariant ret = new TranslationmemoryVariant();
 			ret.setId(variant.getId());
-			//ret.setTuId(variant.getTuId());
+			ret.setTuId(variant.getTuId());
 			ret.setLanguage(LanguageDTO.to(variant.getLanguage()));
 			ret.setSegment(variant.getSegment());
 			ret.setCreateDate(variant.getCreateDate());
@@ -66,7 +67,7 @@ public class TranslationmemoryVariantDTO {
 			tuvs.iterator().forEachRemaining((tuv) -> {
 				TranslationmemoryVariantDTO dto = new TranslationmemoryVariantDTO();
 				dto.setId(tuv.getId());
-				//dto.setTuId(tuv.getTuId());
+				dto.setTuId(tuv.getTuId());
 				dto.setLanguage(LanguageDTO.from(tuv.getLanguage()));
 				dto.setSegment(tuv.getSegment());
 				dto.setCreateDate(tuv.getCreateDate());
@@ -87,7 +88,7 @@ public class TranslationmemoryVariantDTO {
 		if (tuv != null) {
 			TranslationmemoryVariantDTO ret = new TranslationmemoryVariantDTO();
 			ret.setId(tuv.getId());
-			//ret.setTuId(tuv.getTuId());
+			ret.setTuId(tuv.getTuId());
 			ret.setLanguage(LanguageDTO.from(tuv.getLanguage()));
 			ret.setSegment(tuv.getSegment());
 			ret.setCreateDate(tuv.getCreateDate());

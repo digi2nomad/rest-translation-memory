@@ -190,7 +190,7 @@ values (101, 'de', 'German');
 insert into Language (id, langcode, language)
 values (102, 'el', 'Greek');
 insert into Language (id, langcode, language)
-values (103, 'en', 'English');
+values (103, 'en-US', 'English');
 insert into Language (id, langcode, language)
 values (104, 'eo', 'Esperanto');
 insert into Language (id, langcode, language)

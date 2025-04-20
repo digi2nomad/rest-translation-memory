@@ -27,6 +27,8 @@ public class TranslationmemoryUnitDTO {
 	private SegmentTypeDTO segmentType;
 	
 	private Instant createDate;	
+	
+	private List<TranslationmemoryVariantDTO> variants;
 
 	
 	/**
