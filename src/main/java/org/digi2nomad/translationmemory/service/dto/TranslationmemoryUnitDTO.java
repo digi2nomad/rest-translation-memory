@@ -44,6 +44,7 @@ public class TranslationmemoryUnitDTO {
 				dto.setProjId(tu.getProjId());
 				dto.setSegmentType(SegmentTypeDTO.from(tu.getSegmentType()));
 				dto.setCreateDate(tu.getCreateDate());
+				ret.add(dto);
 			});
 			return ret;
 		}

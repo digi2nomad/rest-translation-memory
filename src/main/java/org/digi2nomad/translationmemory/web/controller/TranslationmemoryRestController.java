@@ -160,9 +160,9 @@ public class TranslationmemoryRestController {
 	 * @return
 	 */
 	@GetMapping("/projects/{id}/units/{uId}/variants")
-	public @ResponseBody List<TranslationmemoryVariantDTO> getVariants(@PathVariable("id") Long projId, 
+	public @ResponseBody TranslationmemoryUnitDTO getVariants(@PathVariable("id") Long projId, 
 			@PathVariable("uId") Long unitId) {
-		return translationmemoryService.getVariants(projId, unitId);
+		return translationmemoryService.retrieveUnitAndItsVariants(projId, unitId);
 	}
 	
 	/**
@@ -228,24 +228,12 @@ public class TranslationmemoryRestController {
 	 * @return
 	 */
 	@PostMapping("/projects/{id}/matchedunit/{ratio}/language/{language}")
-	public @ResponseBody TranslationmemoryUnitDTO retrieveMatchedUnitAndVariant(
+	public @ResponseBody TranslationmemoryUnitDTO retrieveMatchedUnitAndItsVariants(
 			@PathVariable("id") Long projId, 
 			@PathVariable("ratio") Long matchRatioThreshold, 
 			@PathVariable("language") String srclang,
 			@RequestBody String segment) {
-		return translationmemoryService.retrieveMatchedUnit(projId, matchRatioThreshold, srclang, segment);
-	}
-	
-	/**
-	 * @param projId
-	 * @param unitId
-	 * @return
-	 */
-	@GetMapping("/projects/{id}/unitandvariants/{uId}")
-	public @ResponseBody TranslationmemoryUnitDTO retrieveUnitAndVariants(
-			@PathVariable("id") Long projId, 
-			@PathVariable("uId") Long unitId) {
-		return translationmemoryService.retrieveUnit(projId, unitId);
+		return translationmemoryService.retrieveMatchedUnitAndItsVariants(projId, matchRatioThreshold, srclang, segment);
 	}
 	
 }

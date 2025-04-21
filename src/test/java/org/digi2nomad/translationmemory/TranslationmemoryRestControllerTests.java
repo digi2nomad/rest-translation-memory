@@ -104,8 +104,7 @@ public class TranslationmemoryRestControllerTests {
 	@Test
 	public void testControllerGetVariants() {
 		when(controller.getVariants(1L, 1L))
-			.thenReturn(Arrays.asList(new TranslationmemoryVariantDTO(), 
-					new TranslationmemoryVariantDTO()));
+			.thenReturn(new TranslationmemoryUnitDTO());
 	}
 	
 	@Test
@@ -132,6 +131,10 @@ public class TranslationmemoryRestControllerTests {
 			.thenReturn(new String("Variant deleted"));
 	}
 	
-	
-	
+
+	@Test
+	public void testRetrieveMatchedUnitAndItsVariants() {
+		when(controller.retrieveMatchedUnitAndItsVariants(1L, 1L, "source", "target"))
+			.thenReturn(new TranslationmemoryUnitDTO());
+	}	
 }

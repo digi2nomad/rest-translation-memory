@@ -107,17 +107,17 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 
 	/**
 	 *
-	 * @param lang
+	 * @param langcode
 	 */
 	@Override
-	public Language findLanguage(String lang) {
+	public Language findLanguage(String langcode) {
 		if (languages == null) {
 			languages = jdbcTemplate.query(SQL_FIND_ALL_LANGUAGES, this::mapRowToLanguage);
 		}
 		Iterator<Language> i = languages.iterator();
 		while (i.hasNext()) {
 			Language l = (Language) i.next();
-			if (l.getLanguage().equals(lang)) {
+			if (l.getLangcode().equals(langcode)) {
 				return l;
 			}
 		}		

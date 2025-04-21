@@ -74,6 +74,7 @@ public class TranslationmemoryVariantDTO {
 				dto.setUseDate(tuv.getUseDate());
 				dto.setUseCount(tuv.getUseCount());
 				dto.setReviewed(tuv.isReviewed());
+				ret.add(dto);
 			});
 			return ret;
 		}

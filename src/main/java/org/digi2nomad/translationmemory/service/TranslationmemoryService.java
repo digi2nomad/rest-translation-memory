@@ -109,11 +109,11 @@ public class TranslationmemoryService {
 	 * @param projId
 	 * @param unitId
 	 * @return
-	 */
+	 *//*
 	public List<TranslationmemoryVariantDTO> getVariants(Long projId, Long unitId) {
 		return TranslationmemoryVariantDTO.from(
 				translationmemoryRepository.findAllTUVs(projId, unitId));
-	}
+	}*/
 
 	/**
 	 * @param projId
@@ -181,20 +181,27 @@ public class TranslationmemoryService {
 	/**
 	 * @param projId
 	 * @param ratio
-	 * @param srclang
+	 * @param srclangcode
 	 * @return
 	 */
-	public TranslationmemoryUnitDTO retrieveMatchedUnit(Long projId, 
+	public TranslationmemoryUnitDTO retrieveMatchedUnitAndItsVariants(Long projId, 
 			Long matchRatioThreshold, 
-			String srclang, 
+			String srclangcode, 
 			String segment) {
-		Language sourceLanguage = translationmemoryRepository.findLanguage(srclang);
+		Language sourceLanguage = translationmemoryRepository.findLanguage(srclangcode);
 		if (sourceLanguage == null) {
-			throw new IllegalArgumentException("Language not found: " + srclang);
+			throw new IllegalArgumentException("Language code not found: " + srclangcode);
 		}
-		return TranslationmemoryUnitDTO.from( 
+		TranslationmemoryUnitDTO unit = TranslationmemoryUnitDTO.from( 
 				translationmemoryRepository.findMatchedTU(projId,  
 						matchRatioThreshold, sourceLanguage, segment));
+		if (unit == null) {
+			throw new IllegalArgumentException("Unit not found: " + segment);
+		}
+		unit.setVariants(
+				TranslationmemoryVariantDTO.from(
+						translationmemoryRepository.findAllTUVs(projId, unit.getId())));
+		return unit;
 	}
 
 	/**
@@ -202,9 +209,15 @@ public class TranslationmemoryService {
 	 * @param unitId
 	 * @return
 	 */
-	public TranslationmemoryUnitDTO retrieveUnit(Long projId, Long unitId) {
+	public TranslationmemoryUnitDTO retrieveUnitAndItsVariants(Long projId, Long unitId) {
 		TranslationmemoryUnitDTO unit = TranslationmemoryUnitDTO.from(
 				translationmemoryRepository.findTU(projId, unitId));
+		if (unit == null) {
+			throw new IllegalArgumentException("Unit not found: " + unitId);
+		}
+		unit.setVariants(
+				TranslationmemoryVariantDTO.from(
+						translationmemoryRepository.findAllTUVs(projId, unitId)));
 		return unit;
 	}
 

@@ -41,6 +41,7 @@ public class TranslationProjectDTO {
 				dto.setName(p.getName());
 				dto.setDescription(p.getDescription());
 				dto.setCreateDate(p.getCreateDate());
+				ret.add(dto);
 			});
 			return ret;
 		}
