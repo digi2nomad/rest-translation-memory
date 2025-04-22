@@ -20,59 +20,152 @@
 #       http://localhost:8080/actuator/threaddump
 #       http://localhost:8080/actuator/heapdump 
 #
-#    The following is the information of the database:
+#    The following is the information of the h2 database:
 #       http://localhost:8080/h2-console
 #		
 #
-
-
+date=$(date '+%Y-%m-%d-%s')
+#    
 #create a project
-curl -X POST localhost:8080/projects -H 'Content-type:application/json' -d '{"name": "EV Update", "description": "trending news of electric vehicles"}'
+#
+curl -s -X POST localhost:8080/projects \
+-H 'Content-type:application/json' \
+--data-binary @- << EOF
+{ 
+   "name": "EV Update", 
+   "description": "trending news of electric vehicles" 
+}
+EOF
 
+#
 #retrieve all projects
-curl -v localhost:8080/projects
+#
+curl -s localhost:8080/projects | tee /tmp/projects-output-$date
 
+#
 #retrieve a project
-curl -v localhost:8080/projects/449877032980072746
+#
+projId=`cat /tmp/projects-output-$date | grep id | cut -d':' -f2 | cut -c2-20`
+curl -s localhost:8080/projects/$projId
 
-
+#
 #update a project
-curl -X PUT localhost:8080/projects/449877032980072746 -H 'Content-type:application/json' -d '{"name": "EV Update 2", "description": "another news of electric vehicles"}'
+#
+curl -s -X PUT localhost:8080/projects/$projId \
+-H 'Content-type:application/json' \
+--data-binary @- << EOF
+{
+	"name": "EV Update 2", 
+	"description": "another news of electric vehicles"
+}
+EOF
 
-#delete a project
-curl -X DELETE localhost:8080/projects/449877032980072746
+#
+#create an unit
+#	
+curl -s -X POST localhost:8080/projects/$projId/units \
+-H 'Content-type:application/json' \
+--data-binary @- << EOF
+{
+	"projId": $projId,
+	"segmentType": { 
+		"type": "sentence"
+	 }
+}
+EOF
 
-#create an unit	
-curl -X POST localhost:8080/projects/449877032980072746/units -H 'Content-type:application/json' -d '{"name": "EV Update", "description": "trending news of electric vehicles"}'
-
+#
 #retrieve all units
-curl -v localhost:8080/projects/449877032980072746/units
+#
+curl -s localhost:8080/projects/$projId/units | tee /tmp/units-output-$date
 
+#
 #retrieve a unit
-curl -v localhost:8080/projects/449877032980072746/units/449877032980072746
+#
+unitId=`cat /tmp/units-output-$date | grep -m1 id | cut -d':' -f2 | cut -c2-20`
+curl -s localhost:8080/projects/$projId/units/$unitId
 
+#
 #update a unit
-curl -X PUT localhost:8080/projects/449877032980072746/units/449877032980072746 -H 'Content-type:application/json' -d '{"name": "EV Update 2", "description": "another news of electric vehicles"}'
+#
+#curl -X PUT localhost:8080/projects/$projId/units/$unitId \
+#-H 'Content-type:application/json' \
+#--data-binary @- << EOF
+#{
+#    "projId": $projId,
+#    "segmentType": { 
+#        "type": "sentence"
+#     }
+#}
 
-#delete a unit
-curl -X DELETE localhost:8080/projects/449877032980072746/units/449877032980072746
-
+#
 #create a variant
-curl -X POST localhost:8080/projects/449877032980072746/units/449877032980072746/variants -H 'Content-type:application/json' -d '{"name": "EV Update", "description": "trending news of electric vehicles"}'
+#
+curl -s -X POST localhost:8080/projects/$projId/units/$unitId/variants \
+-H 'Content-type:application/json' \
+--data-binary @- << EOF
+{
+    "tuId": $unitId,
+    "language": {
+	    "langcode": "en-US"
+	}, 
+	"segment": "string" 
+}
+EOF
 
-#retrieve all variants
-curl -v localhost:8080/projects/449877032980072746/units/449877032980072746/variants
+#
+#retrieve an unit and all of its variants
+#	
+curl -s localhost:8080/projects/$projId/units/$unitId/variants | tee /tmp/variants-output-$date
 
+#
 #retrieve a variant
-curl -v localhost:8080/projects/449877032980072746/units/449877032980072746/variants/449877032980072746
+# 
+#variantId=`cat /tmp/variants-output-$date | grep -m1 id | cut -d':' -f2 | cut -c2-20`
+curl -s localhost:8080/projects/$projId/units/$unitId/variants/$variantId
 
+#
 #retrieve a matched unit and associated variant
-curl -v localhost:8080/projects/449877032980072746/matchedunit/80/language/EN
+#
+curl -s -X POST localhost:8080/projects/$projId/matchedunit/80/language/en-US \
+-H 'Content-type:application/json' \
+--data-binary @- << EOF
+string
+EOF
 
+#
 #update a variant
-curl -X PUT localhost:8080/projects/449877032980072746/units/449877032980072746/variants/449877032980072746 -H 'Content-type:application/json' -d '{"name": "EV Update 2", "description": "another news of electric vehicles"}'
+#
+curl -s -X PUT localhost:8080/projects/$projId/units/$unitId/variants/$variantId \
+-H 'Content-type:application/json' \
+--data-binary @- << EOF
+{
+    "tuId": $unitId,
+    "language": {
+        "langcode": "en-US"
+    }, 
+    "segment": "another string" 
+}
+EOF
 
+#
 #delete a variant
-curl -X DELETE localhost:8080/projects/449877032980072746/units/449877032980072746/variants/449877032980072746
+#
+curl -s -X DELETE localhost:8080/projects/$projId/units/$unitId/variants/$variantId
 
+#
+#delete a unit
+#
+curl -s -X DELETE localhost:8080/projects/$projId/units/$unitId
 
+#	
+#delete a project
+# 
+curl -s -X DELETE localhost:8080/projects/$projId
+
+#	
+#delete temporary files
+#	
+rm -f /tmp/projects-output-$date
+rm -f /tmp/units-output-$date
+rm -f /tmp/variants-output-$date
