@@ -26,9 +26,11 @@ public class TranslationmemoryRestControllerLogger {
 	
 	@Around("execution(* org.digi2nomad.translationmemory.web.controller.*.*(..))")
 	public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-		System.out.println("Before executing: " + joinPoint.getSignature().getName());
+		System.out.println("Before executing in around: " + joinPoint.getSignature().getName());
+		long startTime = System.nanoTime();
 		Object result = joinPoint.proceed();
-		System.out.println("After executing: " + joinPoint.getSignature().getName());
+		long endTime = System.nanoTime();
+		System.out.println("After executing in around: " + joinPoint.getSignature().getName() + " with time: " + (endTime - startTime) + " ns");
 		return result;
 	}
 	
