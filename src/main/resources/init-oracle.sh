@@ -1,9 +1,8 @@
-A REST API and an admin UI of translation memory (TMX, XLIFF and TBX), implemented with relational databases (H2 and Oracle), Spring Boot 
-
+#!/bin/bash
 # The following are the steps used to initialize the Oracle database for the TMX application.
 # 1. Install the Oracle database
 #    - Download the Oracle database from the Oracle website.
-#    - Follow the installation instructions for your operating system,
+#    - Follow the installation instructions for your operating system, 
 #      specify password for SYS and SYSTEM users.
 #    - Start the Oracle database.
 #
@@ -20,12 +19,10 @@ A REST API and an admin UI of translation memory (TMX, XLIFF and TBX), implement
 #   - Allocate quota to the tablespace for the TMX application.
 #        alter user tmx_user quota unlimited on users;
 # 3. Create the Oracle database schema
-echo exit | sqlplus tmx_user/tmx_password@localhost:1521/xepdb1 @schema-oracle.sql
+echo exit | sqlplus tmx_user/tmx_password@localhost:1521/xepdb1 @schema-oracle.sql 
 #
 # 4. Create the Oracle database data
 echo exit | sqlplus tmx_user/tmx_password@localhost:1521/xepdb1 @data-oracle.sql
 #
-
-mvn run:run 
-
-api documents    : http://localhost:8080/api-docs
+# 5. Query the Oracle database
+echo exit | sqlplus tmx_user/tmx_password@localhost:1521/xepdb1 @query-oracle.sql

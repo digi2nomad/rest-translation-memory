@@ -2,6 +2,7 @@ package org.digi2nomad.translationmemory.data;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.UUID;
@@ -200,7 +201,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 				project.getId(),
 				project.getName(),
 				project.getDescription(),
-				project.getCreateDate());
+				Timestamp.from(project.getCreateDate()) );
 		return project;
 	}
 	
@@ -282,7 +283,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 				tu.getId(),
 				projectId,
 				tu.getSegmentType().getId(),	
-				tu.getCreateDate());
+				Timestamp.from(tu.getCreateDate()));
 		return tu;	
 	}
 	
@@ -385,8 +386,8 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 				tuv.getTuId(),
 				tuv.getLanguage().getId(),
 				tuv.getSegment(),
-				tuv.getCreateDate(),
-				tuv.getUseDate(),
+				Timestamp.from(tuv.getCreateDate()),
+				tuv.getUseDate() == null ? null : Timestamp.from(tuv.getUseDate()),
 				tuv.getUseCount(),
 				tuv.isReviewed());	
 		return tuv;	
@@ -416,7 +417,7 @@ public class TranslationmemoryRepositoryJDBC implements TranslationmemoryReposit
 		jdbcTemplate.update( //TODO: projId and uId are not used
 				SQL_UPDATE_TUV,
 				tuv.getSegment(),
-				tuv.getUseDate(),
+				Timestamp.from(tuv.getUseDate()),
 				tuv.getUseCount(),
 				tuv.isReviewed(),
 				tuv.getId());
